@@ -523,12 +523,15 @@ export default function App() {
       setVoiceList(vs);
       if (!voiceRef.current && vs.length) {
         const pickDefault =
-          vs.find((v) => /zira/i.test(v.name)) ||
+          // Prefer modern neural / "Natural" voices when the device exposes them
+          vs.find((v) => /natural|neural|online/i.test(v.name)) ||
+          vs.find((v) => /aria|jenny|ava\b|emma|michelle|nova|sara/i.test(v.name)) ||
           vs.find((v) =>
-            /aria|jenny|samantha|allison|ava\b|susan|joanna|salli|kimberly|kendra|ivy|michelle|female|woman/i.test(
+            /samantha|allison|susan|joanna|salli|kimberly|kendra|ivy|female|woman/i.test(
               v.name,
             ),
           ) ||
+          vs.find((v) => /zira/i.test(v.name)) ||
           vs[0];
         voiceRef.current = pickDefault;
         setVoiceName(pickDefault.name);
@@ -741,6 +744,15 @@ export default function App() {
         @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.14)} 100%{transform:scale(1)} }
         @media (prefers-reduced-motion: reduce) { .wiggle,.pop{animation:none} .press:active{transform:none} }
         button:focus-visible { outline: 3px solid ${C.blue}; outline-offset: 2px; }
+        .layout { display: flex; gap: 18px; max-width: 880px; margin: 0 auto; padding: 14px 14px 0; align-items: flex-start; }
+        .pagemenu { flex: 0 0 176px; position: sticky; top: 12px; }
+        .pagemenu .pagebtns { display: flex; flex-direction: column; gap: 8px; }
+        .content { flex: 1; min-width: 0; }
+        @media (max-width: 720px) {
+          .layout { flex-direction: column; gap: 12px; }
+          .pagemenu { position: static; flex: none; width: 100%; }
+          .pagemenu .pagebtns { flex-direction: row; }
+        }
       `}</style>
 
       {/* ----- Book-cover header ----- */}
@@ -829,61 +841,65 @@ export default function App() {
         </p>
       )}
 
-      {/* ----- Page-group picker ----- */}
-      <div style={{ maxWidth: 560, margin: "0 auto", padding: "14px 14px 0" }}>
-        <div
-          style={{
-            fontSize: 12,
-            fontWeight: 700,
-            letterSpacing: 1.5,
-            color: C.gray,
-            textTransform: "uppercase",
-            marginBottom: 6,
-          }}
-        >
-          📚 Choose your pages
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          {LESSONS.map((L, i) => {
-            const on = i === lessonIdx;
-            return (
-              <button
-                key={L.id}
-                className="press"
-                onClick={() => chooseLesson(i)}
-                style={{
-                  flex: 1,
-                  background: on ? C.blue : "#fff",
-                  color: on ? "#fff" : C.blueDark,
-                  border: `3px solid ${on ? C.blue : C.border}`,
-                  borderRadius: 16,
-                  padding: "10px 4px",
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                }}
-              >
-                <div style={{ fontWeight: 700, fontSize: 20 }}>-{L.family}</div>
-                <div style={{ fontSize: 12, fontWeight: 700, opacity: 0.95 }}>
-                  Pages {L.pages}
-                </div>
-                <div style={{ fontSize: 11, opacity: 0.85 }}>{L.title}</div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      {/* ----- Body: left page menu + content ----- */}
+      <div className="layout">
+        {/* ----- Left page menu ----- */}
+        <aside className="pagemenu">
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: 1.5,
+              color: C.gray,
+              textTransform: "uppercase",
+              marginBottom: 8,
+            }}
+          >
+            📚 Choose your pages
+          </div>
+          <div className="pagebtns">
+            {LESSONS.map((L, i) => {
+              const on = i === lessonIdx;
+              return (
+                <button
+                  key={L.id}
+                  className="press"
+                  onClick={() => chooseLesson(i)}
+                  style={{
+                    flex: 1,
+                    background: on ? C.blue : "#fff",
+                    color: on ? "#fff" : C.blueDark,
+                    border: `3px solid ${on ? C.blue : C.border}`,
+                    borderRadius: 16,
+                    padding: "12px 8px",
+                    cursor: "pointer",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  <div style={{ fontWeight: 700, fontSize: 22 }}>
+                    -{L.family}
+                  </div>
+                  <div style={{ fontSize: 12, fontWeight: 700, opacity: 0.95 }}>
+                    Pages {L.pages}
+                  </div>
+                  <div style={{ fontSize: 11, opacity: 0.85 }}>{L.title}</div>
+                </button>
+              );
+            })}
+          </div>
+        </aside>
 
-      {/* ----- Tabs ----- */}
-      <nav
-        style={{
-          display: "flex",
-          gap: 8,
-          overflowX: "auto",
-          padding: "12px 14px 4px",
-          maxWidth: 560,
-          margin: "0 auto",
-        }}
-      >
+        {/* ----- Content (tabs + panels) ----- */}
+        <div className="content">
+          {/* ----- Tabs ----- */}
+          <nav
+            style={{
+              display: "flex",
+              gap: 8,
+              overflowX: "auto",
+              padding: "0 0 4px",
+            }}
+          >
         {tabs.map(([id, label]) => (
           <button
             key={id}
@@ -907,7 +923,7 @@ export default function App() {
         ))}
       </nav>
 
-      <main style={{ maxWidth: 560, margin: "0 auto", padding: "12px 14px 0" }}>
+          <main style={{ padding: "12px 0 0" }}>
         {/* ----- Voice & speed settings ----- */}
         <div
           style={{
@@ -990,8 +1006,10 @@ export default function App() {
             ))}
           </div>
           <div style={{ fontSize: 12, color: C.gray }}>
-            American English (en-US) voices only — Microsoft Zira is picked
-            automatically when your computer has it.
+            American English (en-US) voices only — the most natural-sounding
+            voice on your device is picked automatically. For richer voices on
+            Windows, open this app in Microsoft Edge, or add voices in Settings ▸
+            Time &amp; language ▸ Speech.
           </div>
         </div>
 
@@ -1073,11 +1091,11 @@ export default function App() {
                   </div>
                   <FamilyWord word={w.word} family={lesson.family} size={32} />
                   <div style={{ display: "flex", gap: 6 }}>
-                    <Pill small onClick={() => sayWord(w.word)}>
-                      🔊 Say
-                    </Pill>
                     <Pill small bg={C.red} onClick={() => soundOut(w.word)}>
                       🧩 Sound it
+                    </Pill>
+                    <Pill small onClick={() => sayWord(w.word)}>
+                      🔊 Say
                     </Pill>
                   </div>
                 </div>
@@ -1326,7 +1344,9 @@ export default function App() {
             )}
           </section>
         )}
-      </main>
+          </main>
+        </div>
+      </div>
 
       <footer
         style={{
