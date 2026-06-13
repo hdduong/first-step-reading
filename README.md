@@ -20,6 +20,16 @@ This app is designed to complement the FirstStepReading books and videos. It is 
 
 FirstStepReading is completely free to use and contains no ads.
 
+## Technology Used
+
+- React 19 for the interactive reading practice interface
+- Vite 8 for local development, fast refresh, and production builds
+- JavaScript and JSX with ES modules for the app code
+- Browser Web Speech API for tap-to-hear words, sentences, spelling, and voice speed controls
+- Inline SVG character art, emoji illustrations, and responsive CSS for the kid-friendly visual experience
+- ESLint with React Hooks and React Refresh rules for code quality
+- npm for dependency management and project scripts
+
 ## Development
 
 This project is built with React and Vite.
