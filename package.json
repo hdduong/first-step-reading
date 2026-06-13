@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "audio:list": "node scripts/list-clips.mjs",
+    "audio:cut": "node scripts/cut-clips.mjs",
     "audio:manifest": "node scripts/build-audio-manifest.mjs"
   },
   "dependencies": {

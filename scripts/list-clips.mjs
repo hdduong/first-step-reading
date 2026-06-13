@@ -4,35 +4,9 @@
 //
 //   npm run audio:list
 //
-import { BOOKS } from "../src/data/index.js";
-import {
-  wordToken,
-  soundOutTokens,
-  spellTokens,
-  vowelIntroTokens,
-} from "../src/lib/phonics.js";
+import { clipList } from "./clip-list.mjs";
 
-const byClip = new Map(); // clip key -> human label of what to record
-const add = (t) => {
-  if (t && t.clip && !byClip.has(t.clip)) byClip.set(t.clip, t.say);
-};
-
-for (const book of BOOKS) {
-  for (const L of book.lessons) {
-    vowelIntroTokens(L.family).forEach(add);
-    for (const w of L.words) {
-      add(wordToken(w.word));
-      soundOutTokens(w.word, L.family).forEach(add);
-    }
-    for (const s of L.sight) {
-      add(wordToken(s));
-      spellTokens(s).forEach(add);
-    }
-    for (const sent of L.sentences) {
-      sent.words.forEach((word) => add(wordToken(word)));
-    }
-  }
-}
+const byClip = clipList(); // clip key -> human label of what to record
 
 const folders = { sounds: [], words: [], letters: [] };
 for (const [clip, say] of [...byClip].sort((a, b) => a[0].localeCompare(b[0]))) {

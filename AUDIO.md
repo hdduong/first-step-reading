@@ -33,52 +33,35 @@ ffmpeg -i firststepreading.mp4 -vn -ac 1 -ar 44100 audio.wav
 
 `-vn` drops the video, `-ac 1` makes it mono, `-ar 44100` sets the sample rate.
 
-## 3. Split into individual clips
+## 3. Label each sound, then cut them all at once
 
-Since the video isn't already cut per sound, pick one approach:
+The names in the cut list contain a folder (`words/cat`, `sounds/onset-c`).
+`npm run audio:cut` reads an Audacity label file and writes every clip into the
+right folder for you — trimmed, faded, mono, and volume-matched (`loudnorm`) so
+nothing is jarringly loud or quiet.
 
-### Option A — Audacity (most control, recommended)
+1. In Audacity: **File ▸ Import ▸ Audio** → `audio.wav`.
+2. At the start of each sound, press **Ctrl+B** to add a label and type the clip
+   name from the cut list, *including the folder* — e.g. `words/cat`,
+   `sounds/onset-c`, `letters/a`. Drag the label edges to tightly bracket the
+   sound (trim silence).
+3. **File ▸ Export ▸ Export Labels…** → `labels.txt` (each line is
+   `<start>  <end>  <name>`).
+4. Cut every clip:
 
-1. **File ▸ Import ▸ Audio** → `audio.wav`.
-2. Listen and, at the start of each sound/word, press **Ctrl+B** to add a label;
-   type the clip name from the cut list (e.g. `words/cat` → label it `cat`).
-3. Drag label edges to tightly bracket each sound (trim silence).
-4. **File ▸ Export ▸ Export Multiple…**, split by **Label**, format **MP3** — it
-   writes one file per label name.
+   ```bash
+   npm run audio:cut -- audio.wav labels.txt --dry-run   # preview + check names
+   npm run audio:cut -- audio.wav labels.txt             # write the clips
+   ```
 
-### Option B — Automatic split on silence (fast first pass)
+`--dry-run` validates every name against the cut list (catching typos like
+`word/cat`) and prints what it would write — no ffmpeg needed. Drop the flag to
+do the real cut (that step needs ffmpeg on your PATH).
 
-Works only if there's a clear pause around each sound. Using
-[auto-editor](https://github.com/WyattBlue/auto-editor) or the ffmpeg snippet
-below, then rename the numbered outputs per the cut list:
+You don't have to do them all in one sitting — label and cut a handful at a
+time; any clip you haven't recorded yet just falls back to the device voice.
 
-```bash
-# Make a labels file: "<start_seconds> <end_seconds> <name>" per line, then:
-while read start end name; do
-  mkdir -p "public/audio/$(dirname "$name")"
-  ffmpeg -i audio.wav -ss "$start" -to "$end" \
-    -af "afade=t=in:d=0.01,afade=t=out:st=$(echo "$end-$start-0.01"|bc):d=0.01,loudnorm=I=-16:TP=-1.5" \
-    -ac 1 "public/audio/$name.mp3"
-done < labels.txt
-```
-
-`loudnorm` evens out volume across clips so nothing is jarringly loud or quiet.
-
-## 4. Name and place the files
-
-Match the cut list exactly, e.g.:
-
-```
-public/audio/sounds/onset-c.mp3   (the "kuh" sound)
-public/audio/sounds/rime-at.mp3   (the "at" ending)
-public/audio/letters/c.mp3        (letter name "see")
-public/audio/words/cat.mp3        (the word "Cat")
-```
-
-Tip: trim leading/trailing silence and keep clips short — they play back-to-back
-when sounding a word out.
-
-## 5. Register the clips
+## 4. Register the clips
 
 ```bash
 npm run audio:manifest   # rewrites src/lib/clips-manifest.js from public/audio/
@@ -86,5 +69,3 @@ npm run dev              # the app now uses your recorded clips
 ```
 
 Commit `public/audio/**` and the regenerated `src/lib/clips-manifest.js`.
-Any clip you haven't recorded yet simply falls back to the device voice, so you
-can add them gradually.
