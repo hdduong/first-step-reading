@@ -1,22 +1,26 @@
-# Book scans (source photos for transcription)
+# Book scans (local source photos — not committed)
 
-Upload photos of the book pages here. These are **source material only** — I
-read them to pull out the text and build the app's lesson data. They are **not**
-bundled into the app (this folder lives outside `public/`, so nothing here ships
-to users).
+Book page photos are **source material only**: they're read once to pull the
+text out and build the app's lesson data, then they're done. The image files are
+**git-ignored** (see `.gitignore` in this folder), so they're never committed or
+shipped — only this README and the per-book `.gitkeep` folders are tracked.
 
-## How to use
+## Getting page photos to Claude
 
-1. Put page photos in a per-book folder, e.g. `book-scans/book1/`.
-2. Name them by page if you can — `page-01.jpg`, `page-02.jpg`, … — so the order
-   is unambiguous. Any clear names work; I'll infer order from the content if
-   needed.
-3. Tell me they're uploaded. I'll read each page and fill in
-   `src/data/book1.js` — word families, words, sight words, sentences, titles,
-   and page numbers — and likewise for Books 2 & 3.
+Claude Code runs in a fresh cloud container, so dropping files onto a local path
+on your machine does **not** reach it. Use one of these instead:
 
-Formats: png / jpg / jpeg / webp. Clear, straight-on, well-lit photos read best;
-one page per photo is ideal.
+- **Attach the photos in chat** (simplest): add them to your message and ask
+  Claude to transcribe. The images never touch the repo.
+- **Scratch branch**: push the scans to a throwaway branch so Claude can pull and
+  read them, then delete the branch. They'd briefly live on that branch but never
+  reach `main`.
 
-Once a book's text is in the app, these scans can be deleted if you'd rather not
-keep them in the repo.
+## What Claude does with them
+
+Reads each page and fills in `src/data/bookN.js` — word families, words, sight
+words, sentences, titles, and page numbers. The transcribed text in those data
+files is the durable artifact; the photos are throwaway.
+
+Tip: name them by page (`page-01.jpg`, `page-02.jpg`, …) and shoot one clear,
+straight-on page per photo so they read cleanly.
