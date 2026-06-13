@@ -5,12 +5,39 @@ import FamilyWord from "../FamilyWord.jsx";
 import PicFor from "../PicFor.jsx";
 import { VOWEL_INFO, vowelOf } from "../../lib/phonics.js";
 
+const POP_MODES = [
+  { key: "tap", label: "👆 Tap" },
+  { key: "hover", label: "🖱️ Hover" },
+];
+
 export default function WordsTab({ lesson, speech }) {
   const v = vowelOf(lesson.family);
   const info = VOWEL_INFO[v] ?? { sound: v, word: lesson.family, emoji: "" };
-  // Hovering a word pops it large into the middle of the screen to hold a
-  // child's focus; it stays until they close it.
+
+  // A word pops large into the middle of the screen to hold a child's focus; it
+  // stays until they close it. It can be triggered by hovering (good on a
+  // desktop) or by tapping (the only thing that works on a touchscreen, where
+  // hover never fires). The choice is remembered, and defaults to tap on
+  // touch-only devices.
   const [popWord, setPopWord] = useState(null);
+  const [popMode, setPopMode] = useState(() => {
+    if (typeof window === "undefined") return "tap";
+    try {
+      const saved = localStorage.getItem("fsr.popMode");
+      if (saved === "hover" || saved === "tap") return saved;
+    } catch {
+      /* localStorage may be unavailable */
+    }
+    return window.matchMedia?.("(hover: none)").matches ? "tap" : "hover";
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("fsr.popMode", popMode);
+    } catch {
+      /* ignore */
+    }
+  }, [popMode]);
 
   useEffect(() => {
     if (!popWord) return;
@@ -18,6 +45,13 @@ export default function WordsTab({ lesson, speech }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [popWord]);
+
+  // Open the pop-out from a card. In hover mode this is wired to onMouseEnter,
+  // in tap mode to onClick; keyboard (Enter/Space) works in either mode.
+  const triggerProps = (w) =>
+    popMode === "hover"
+      ? { onMouseEnter: () => setPopWord(w) }
+      : { onClick: () => setPopWord(w) };
 
   return (
     <section>
@@ -50,7 +84,64 @@ export default function WordsTab({ lesson, speech }) {
         </Pill>
       </div>
 
-      <h2 style={h2Style}>The “-{lesson.family}” words — hover to focus, tap to hear!</h2>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 10,
+          margin: "4px 0 12px",
+        }}
+      >
+        <h2 style={{ ...h2Style, margin: 0 }}>
+          The “-{lesson.family}” words —{" "}
+          {popMode === "tap" ? "tap" : "hover over"} a word to pop it big!
+        </h2>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 13, color: C.gray, fontWeight: 700 }}>
+            Pop on:
+          </span>
+          <div
+            role="group"
+            aria-label="Pop-out trigger"
+            style={{
+              display: "inline-flex",
+              gap: 2,
+              padding: 3,
+              borderRadius: 999,
+              border: `2px solid ${C.border}`,
+              background: "#fff",
+            }}
+          >
+            {POP_MODES.map((m) => {
+              const active = popMode === m.key;
+              return (
+                <button
+                  key={m.key}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setPopMode(m.key)}
+                  style={{
+                    border: "none",
+                    borderRadius: 999,
+                    padding: "6px 12px",
+                    fontSize: 13,
+                    fontWeight: 700,
+                    fontFamily: "inherit",
+                    cursor: "pointer",
+                    background: active ? C.blue : "transparent",
+                    color: active ? "#fff" : C.gray,
+                  }}
+                >
+                  {m.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       <div
         style={{
           display: "grid",
@@ -61,10 +152,8 @@ export default function WordsTab({ lesson, speech }) {
         {lesson.words.map((w) => (
           <div
             key={w.word}
-            onMouseEnter={() => setPopWord(w)}
             style={{
               ...cardStyle,
-              cursor: "pointer",
               boxShadow:
                 speech.speakingKey === `w-${w.word}`
                   ? ring
@@ -72,16 +161,37 @@ export default function WordsTab({ lesson, speech }) {
             }}
           >
             <div
+              {...triggerProps(w)}
+              role="button"
+              tabIndex={0}
+              aria-label={`Pop out ${w.word}`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setPopWord(w);
+                }
+              }}
               style={{
-                height: 80,
+                cursor: "pointer",
+                width: "100%",
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
+                gap: 8,
               }}
             >
-              <PicFor pic={w.pic} size={56} />
+              <div
+                style={{
+                  height: 80,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <PicFor pic={w.pic} size={56} />
+              </div>
+              <FamilyWord word={w.word} family={lesson.family} size={32} />
             </div>
-            <FamilyWord word={w.word} family={lesson.family} size={32} />
             <div style={{ display: "flex", gap: 6 }}>
               <Pill small bg={C.red} onClick={() => speech.soundOut(w.word, lesson.family)}>
                 🧩 Sound it
