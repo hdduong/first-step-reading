@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "audio:list": "node scripts/list-clips.mjs",
+    "audio:cut": "node scripts/cut-clips.mjs",
+    "audio:manifest": "node scripts/build-audio-manifest.mjs"
   },
   "dependencies": {
     "react": "^19.2.6",
