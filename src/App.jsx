@@ -140,7 +140,7 @@ export default function App() {
                 lineHeight: 1.05,
               }}
             >
-              {book.vowel}
+              {book.theme}
             </h1>
             <div style={{ fontWeight: 600, fontSize: 16 }}>
               {lesson

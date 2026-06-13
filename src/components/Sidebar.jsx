@@ -6,27 +6,18 @@ export default function Sidebar({ books, bookIdx, onBook, lessons, lessonIdx, on
   return (
     <aside className="pagemenu">
       <div style={labelStyle}>📚 Choose your book</div>
-      <div className="pagebtns" style={{ marginBottom: 16 }}>
-        {books.map((b, i) => {
-          const on = i === bookIdx;
-          return (
-            <button
-              key={b.id}
-              className="press"
-              onClick={() => onBook(i)}
-              style={{
-                ...menuBtnStyle(on),
-                opacity: b.comingSoon ? 0.6 : 1,
-              }}
-            >
-              <div style={{ fontWeight: 700, fontSize: 15 }}>
-                Book {i + 1}
-              </div>
-              <div style={{ fontSize: 11, opacity: 0.9 }}>{b.vowel}</div>
-            </button>
-          );
-        })}
-      </div>
+      <select
+        value={bookIdx}
+        onChange={(e) => onBook(Number(e.target.value))}
+        aria-label="Choose your book"
+        style={bookSelectStyle}
+      >
+        {books.map((b, i) => (
+          <option key={b.id} value={i}>
+            {`Book ${i + 1} — ${b.theme}${b.comingSoon ? " (coming soon)" : ""}`}
+          </option>
+        ))}
+      </select>
 
       {lessons.length > 0 && (
         <>
@@ -63,6 +54,20 @@ const labelStyle = {
   color: C.gray,
   textTransform: "uppercase",
   marginBottom: 8,
+};
+
+const bookSelectStyle = {
+  width: "100%",
+  marginBottom: 16,
+  background: "#fff",
+  color: C.blueDark,
+  border: `3px solid ${C.blue}`,
+  borderRadius: 16,
+  padding: "12px 14px",
+  fontWeight: 700,
+  fontSize: 15,
+  fontFamily: "inherit",
+  cursor: "pointer",
 };
 
 const menuBtnStyle = (on) => ({

@@ -1,9 +1,10 @@
-// Book 1 — Short Vowel A (pages 1–16).
-// Each lesson is one word family (-at, -an, -am) and drives every tab.
+// Book 1 — ABC's and Short Vowels.
+// (Short Vowel A families -at/-an/-am are written so far, pages 1–16.)
+// Each lesson is one word family and drives every tab.
 export default {
   id: "book1",
   step: 1,
-  vowel: "Short Vowel A",
+  theme: "ABC's and Short Vowels",
   pageRange: "1–16",
   lessons: [
     {
