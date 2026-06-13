@@ -1,0 +1,11 @@
+# Book page scans are local source material for transcription only — never
+# commit the image files themselves. The folder structure (README.md and the
+# per-book .gitkeep files) stays tracked.
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.heic
+*.heif
+*.gif
+*.pdf
