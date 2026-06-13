@@ -1,16 +1,38 @@
-# React + Vite
+# FirstStepReading
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FirstStepReading is a free, ad-free interactive companion app that helps kids practice letter sounds, word families, and early reading skills alongside the FirstStepReading books and videos.
 
-Currently, two official plugins are available:
+The app gives young learners another way to connect letters with sounds. Kids can tap words to hear them, practice short-vowel word families, listen to sentences, and build confidence through simple touch-based activities.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What Kids Can Practice
 
-## React Compiler
+- Letter sounds and short-vowel patterns
+- Word families like `-at`, `-an`, and `-am`
+- Sight words from the reading pages
+- Listening, tapping, and reading simple sentences
+- Matching spoken words in a playful practice game
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Companion To Books And Videos
 
-## Expanding the ESLint configuration
+This app is designed to complement the FirstStepReading books and videos. It is not meant to replace reading together, but to give children an interactive way to review the same sounds, words, and sentence patterns they are learning.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Free And Ad-Free
+
+FirstStepReading is completely free to use and contains no ads.
+
+## Development
+
+This project is built with React and Vite.
+
+```bash
+npm install
+npm run dev
+```
+
+Useful scripts:
+
+```bash
+npm run build
+npm run lint
+npm run preview
+```
