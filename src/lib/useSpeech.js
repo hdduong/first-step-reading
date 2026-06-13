@@ -4,7 +4,6 @@ import { wordToken, soundOutTokens, spellTokens, vowelIntroTokens } from "./phon
 import { DEFAULT_VOICE_ID } from "./voices.js";
 
 export const SPEEDS = [
-  ["🐢 Turtle", 0.7],
   ["Slow", 0.85],
   ["Normal", 1],
 ];
