@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { hasClip, clipUrl } from "./audio.js";
 import { wordToken, soundOutTokens, spellTokens, vowelIntroTokens } from "./phonics.js";
+import { DEFAULT_VOICE_ID } from "./voices.js";
 
 export const SPEEDS = [
-  ["🐢 Turtle", 0.7],
   ["Slow", 0.85],
   ["Normal", 1],
 ];
@@ -16,6 +16,19 @@ export function useSpeech() {
   const [voiceName, setVoiceName] = useState("");
   const [speed, setSpeed] = useState(1);
   const [speakingKey, setSpeakingKey] = useState(null);
+
+  // Which voice the picker has selected: an ElevenLabs voice id, or DEVICE_VOICE
+  // for the built-in offline voice. Persisted so the choice sticks. The actual
+  // ElevenLabs synthesis is wired separately (see the seam in `speak` below);
+  // voiceIdRef lets that code read the current selection.
+  const [voiceId, setVoiceIdState] = useState(() => {
+    try {
+      return localStorage.getItem("fsr.voiceId") || DEFAULT_VOICE_ID;
+    } catch {
+      return DEFAULT_VOICE_ID;
+    }
+  });
+  const voiceIdRef = useRef(voiceId);
   const voiceRef = useRef(null);
   const speedRef = useRef(1);
   const audioRef = useRef(null);
@@ -105,6 +118,12 @@ export function useSpeech() {
         i++;
         next();
       };
+      // --- ElevenLabs voice seam (wired separately by the EL integration) ---
+      // When a cloud voice is selected (voiceIdRef.current !== DEVICE_VOICE) and
+      // an API key is available, synthesize `t.say` with that voice here: set
+      // audioRef.current to the playing audio and call done() when it ends
+      // (fall back to speakText on error). Until that is wired, playback falls
+      // through to recorded clips / the device voice below.
       if (hasClip(t.clip)) {
         const a = new Audio(clipUrl(t.clip));
         a.playbackRate = clipRate;
@@ -144,6 +163,19 @@ export function useSpeech() {
     speedRef.current = v;
   };
 
+  // Picker selection: an ElevenLabs voice id, or DEVICE_VOICE. Cancels any
+  // in-flight playback so the next sound uses the new voice.
+  const setVoice = (id) => {
+    cancel();
+    setVoiceIdState(id);
+    voiceIdRef.current = id;
+    try {
+      localStorage.setItem("fsr.voiceId", id);
+    } catch {
+      /* ignore */
+    }
+  };
+
   return {
     canSpeak,
     voiceList,
@@ -159,6 +191,8 @@ export function useSpeech() {
     testVoice,
     pickVoice,
     changeSpeed,
+    voiceId,
+    setVoice,
     cancel,
   };
 }

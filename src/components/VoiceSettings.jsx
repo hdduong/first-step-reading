@@ -1,9 +1,12 @@
 import { C, cardStyle } from "../theme.js";
 import Pill from "./Pill.jsx";
+import { ELEVEN_VOICES, DEVICE_VOICE } from "../lib/voices.js";
 
-// Voice picker + speed controls. Driven entirely by the useSpeech hook.
+// Voice picker + speed controls. The voice list is the curated set of
+// ElevenLabs voices (plus an offline device-voice option); the selected id is
+// held by the useSpeech hook, where the ElevenLabs synthesis is wired in.
 export default function VoiceSettings({ speech }) {
-  const { voiceList, voiceName, speed, SPEEDS, pickVoice, changeSpeed, testVoice } = speech;
+  const { voiceId, setVoice, speed, SPEEDS, changeSpeed, testVoice } = speech;
   return (
     <div
       style={{
@@ -27,8 +30,9 @@ export default function VoiceSettings({ speech }) {
           🗣️ Voice
         </span>
         <select
-          value={voiceName}
-          onChange={(e) => pickVoice(e.target.value)}
+          value={voiceId}
+          onChange={(e) => setVoice(e.target.value)}
+          aria-label="Choose a voice"
           style={{
             flex: 1,
             minWidth: 150,
@@ -42,12 +46,12 @@ export default function VoiceSettings({ speech }) {
             background: "#fff",
           }}
         >
-          {voiceList.length === 0 && <option value="">Default voice</option>}
-          {voiceList.map((v) => (
-            <option key={v.name} value={v.name}>
-              {v.name.split(" - ")[0].replace("Desktop", "").trim()}
+          {ELEVEN_VOICES.map((v) => (
+            <option key={v.id} value={v.id}>
+              {v.gender ? `${v.name} (${v.gender})` : v.name}
             </option>
           ))}
+          <option value={DEVICE_VOICE}>📱 Device voice (offline)</option>
         </select>
         <Pill small onClick={testVoice}>
           🔊 Test
@@ -84,10 +88,8 @@ export default function VoiceSettings({ speech }) {
         ))}
       </div>
       <div style={{ fontSize: 12, color: C.gray }}>
-        Recorded clips are used when available; otherwise the app uses your
-        device's most natural-sounding American English (en-US) voice. For
-        richer fallback voices on Windows, open this app in Microsoft Edge, or
-        add voices in Settings ▸ Time &amp; language ▸ Speech.
+        Pick the voice the app reads with. The named voices use ElevenLabs;
+        “Device voice” works offline using your device’s built-in speech.
       </div>
     </div>
   );
