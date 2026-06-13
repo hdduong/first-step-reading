@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { C, cardStyle, ring, h2Style } from "../../theme.js";
 import Pill from "../Pill.jsx";
 import FamilyWord from "../FamilyWord.jsx";
 import PicFor from "../PicFor.jsx";
+import PopOut from "../PopOut.jsx";
 import { VOWEL_INFO, vowelOf } from "../../lib/phonics.js";
 
 export default function WordsTab({ lesson, speech }) {
@@ -10,17 +11,9 @@ export default function WordsTab({ lesson, speech }) {
   const info = VOWEL_INFO[v] ?? { sound: v, word: lesson.family, emoji: "" };
 
   // Tapping a word pops it large into the middle of the screen to hold a
-  // child's focus; it stays until they close it (tap the backdrop, the ✕, or
-  // press Escape). Tap/click works on every device — there is no hover, which
-  // never fires on a touchscreen.
+  // child's focus; it stays until they close it. Tap/click works on every
+  // device — there is no hover, which never fires on a touchscreen.
   const [popWord, setPopWord] = useState(null);
-
-  useEffect(() => {
-    if (!popWord) return;
-    const onKey = (e) => e.key === "Escape" && setPopWord(null);
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [popWord]);
 
   return (
     <section>
@@ -119,75 +112,25 @@ export default function WordsTab({ lesson, speech }) {
       </div>
 
       {popWord && (
-        <div
-          onClick={() => setPopWord(null)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 50,
-            background: "rgba(20,30,60,0.55)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 20,
-          }}
-        >
+        <PopOut label={popWord.word} onClose={() => setPopWord(null)}>
           <div
-            className="pop"
-            role="dialog"
-            aria-modal="true"
-            aria-label={popWord.word}
-            onClick={(e) => e.stopPropagation()}
             style={{
-              ...cardStyle,
-              position: "relative",
-              width: "100%",
-              maxWidth: 420,
-              padding: "34px 24px 26px",
+              minHeight: 150,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <button
-              type="button"
-              onClick={() => setPopWord(null)}
-              aria-label="Close"
-              style={{
-                position: "absolute",
-                top: 10,
-                right: 10,
-                width: 42,
-                height: 42,
-                borderRadius: "50%",
-                border: `3px solid ${C.border}`,
-                background: "#fff",
-                color: C.blueDark,
-                fontSize: 20,
-                fontWeight: 700,
-                lineHeight: 1,
-                cursor: "pointer",
-                fontFamily: "inherit",
-              }}
-            >
-              ✕
-            </button>
-            <div
-              style={{
-                minHeight: 150,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <PicFor pic={popWord.pic} size={150} />
-            </div>
-            <FamilyWord word={popWord.word} family={lesson.family} size={72} />
-            <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-              <Pill bg={C.red} onClick={() => speech.soundOut(popWord.word, lesson.family)}>
-                🧩 Sound it
-              </Pill>
-              <Pill onClick={() => speech.sayWord(popWord.word)}>🔊 Say</Pill>
-            </div>
+            <PicFor pic={popWord.pic} size={150} />
           </div>
-        </div>
+          <FamilyWord word={popWord.word} family={lesson.family} size={72} />
+          <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+            <Pill bg={C.red} onClick={() => speech.soundOut(popWord.word, lesson.family)}>
+              🧩 Sound it
+            </Pill>
+            <Pill onClick={() => speech.sayWord(popWord.word)}>🔊 Say</Pill>
+          </div>
+        </PopOut>
       )}
     </section>
   );
