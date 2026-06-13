@@ -1,12 +1,16 @@
-// Book 1 — ABC's and Short Vowels.
-// (Short Vowel A families -at/-an/-am are written so far, pages 1–16.)
-// Each lesson is one word family and drives every tab.
+// Book 1 — ABC's and Short Vowels (pages 1–92).
+// Each lesson is one book "story" and drives every tab. A story is normally one
+// word family (e.g. -at), so `family` sets the vowel + colored rime. A few
+// stories teach two families (e.g. "Dad's Bag" = -ad and -ag); those words carry
+// their own `family` so they sound out and color correctly (WordsTab falls back
+// to the lesson family when a word omits it).
 export default {
   id: "book1",
   step: 1,
   theme: "ABC's and Short Vowels",
-  pageRange: "1–16",
+  pageRange: "1–92",
   lessons: [
+    // ----- Short Vowel A -----
     {
       id: "at",
       family: "at",
@@ -124,6 +128,541 @@ export default {
             "yam.",
           ],
         },
+      ],
+    },
+    {
+      id: "dadsbag",
+      family: "ad",
+      title: "Dad's Bag",
+      pages: "17–21",
+      words: [
+        { word: "Bad", pic: "😠" },
+        { word: "Dad", pic: "👨" },
+        { word: "Glad", pic: "😄" },
+        { word: "Mad", pic: "😡" },
+        { word: "Sad", pic: "😢" },
+        { word: "Bag", pic: "🛍️", family: "ag" },
+        { word: "Gag", pic: "🤢", family: "ag" },
+        { word: "Wag", pic: "🐕", family: "ag" },
+      ],
+      sight: ["Has", "Is", "And", "Are"],
+      sentences: [
+        {
+          page: 18,
+          pic: "🛍️",
+          words: ["Mat", "has", "Dad's", "bag.", "Mat", "wags."],
+        },
+        { page: 19, pic: "😡", words: ["Mat", "is", "bad.", "Dad", "is", "mad."] },
+        {
+          page: 20,
+          pic: "🤢",
+          words: ["Gag!", "Gag!", "Gag!", "Mat", "is", "sad."],
+        },
+        { page: 21, pic: "🤗", words: ["Dad", "and", "Mat", "are", "glad."] },
+      ],
+    },
+    {
+      id: "dabrap",
+      family: "ap",
+      title: "Dab. Rap a Tap.",
+      pages: "22–26",
+      words: [
+        { word: "Cab", pic: "🚕", family: "ab" },
+        { word: "Dab", pic: "💧", family: "ab" },
+        { word: "Cap", pic: "🧢" },
+        { word: "Lap", pic: "🦵" },
+        { word: "Map", pic: "🗺️" },
+        { word: "Nap", pic: "😴" },
+        { word: "Rap", pic: "🎤" },
+        { word: "Tap", pic: "👆" },
+      ],
+      sight: ["With", "Has", "A", "At", "The", "And", "In", "Her"],
+      sentences: [
+        { page: 23, pic: "💧", words: ["Dab.", "Dab.", "Dab."] },
+        {
+          page: 24,
+          pic: "🌧️",
+          words: ["Rap", "a", "tap.", "Tap.", "Tap.", "Tap."],
+        },
+        {
+          page: 25,
+          pic: "😴",
+          words: ["Pat", "has", "a", "nap", "with", "a", "cap", "in", "her", "lap."],
+        },
+        {
+          page: 26,
+          pic: "🚕",
+          words: ["Pat", "has", "a", "cap", "and", "a", "map", "at", "the", "cab."],
+        },
+      ],
+    },
+    // ----- Short Vowel E -----
+    {
+      id: "ed",
+      family: "ed",
+      title: "Red",
+      pages: "27–31",
+      words: [
+        { word: "Ed", pic: "🦛" },
+        { word: "Bed", pic: "🛏️" },
+        { word: "Fed", pic: "🍽️" },
+        { word: "Red", pic: "🦖" },
+        { word: "Ted", pic: "🧸" },
+        { word: "Wed", pic: "💍" },
+      ],
+      sight: ["In", "Is", "A", "Not", "To", "Has"],
+      sentences: [
+        { page: 28, pic: "🦖", words: ["Red", "is", "a", "T", "Rex."] },
+        { page: 29, pic: "🦛", words: ["Red", "is", "not", "wed", "to", "Ed."] },
+        { page: 30, pic: "🍽️", words: ["Red", "is", "fed."] },
+        { page: 31, pic: "🛏️", words: ["Red", "has", "a", "ted", "in", "bed."] },
+      ],
+    },
+    {
+      id: "eg",
+      family: "eg",
+      title: "Red Begs",
+      pages: "32–33",
+      words: [
+        { word: "Beg", pic: "🙏" },
+        { word: "Leg", pic: "🦵" },
+        { word: "Keg", pic: "🛢️" },
+      ],
+      sight: ["For", "A", "Do", "Not", "At", "The"],
+      sentences: [
+        {
+          page: 33,
+          pic: "🛢️",
+          words: [
+            "Red", "begs", "for", "a", "keg.",
+            "Red", "do", "not", "beg", "at", "the", "leg.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "en",
+      family: "en",
+      title: "The Hens",
+      pages: "34–36",
+      words: [
+        { word: "Ben", pic: "🐔" },
+        { word: "Hen", pic: "🐔" },
+        { word: "Ken", pic: "🐔" },
+        { word: "Len", pic: "🐔" },
+        { word: "Men", pic: "👨" },
+        { word: "Pen", pic: "🖊️" },
+        { word: "Ten", pic: "🔟" },
+      ],
+      sight: ["Are", "And", "The", "In", "With"],
+      sentences: [
+        {
+          page: 35,
+          pic: "🐔",
+          words: ["Ben,", "Ken,", "and", "Len", "are", "men", "hens."],
+        },
+        {
+          page: 36,
+          pic: "🐔",
+          words: ["The", "ten", "hens", "are", "in", "the", "pen", "with", "Red."],
+        },
+      ],
+    },
+    {
+      id: "et",
+      family: "et",
+      title: "The Jet",
+      pages: "37–39",
+      words: [
+        { word: "Bet", pic: "🎲" },
+        { word: "Get", pic: "🤲" },
+        { word: "Jet", pic: "✈️" },
+        { word: "Let", pic: "🆗" },
+        { word: "Met", pic: "🤝" },
+        { word: "Pet", pic: "🐾" },
+        { word: "Set", pic: "📦" },
+        { word: "Vet", pic: "🩺" },
+        { word: "Wet", pic: "💦" },
+        { word: "Yet", pic: "⏳" },
+      ],
+      sight: ["She", "Will", "A", "Not", "Me", "The", "I", "At", "In"],
+      sentences: [
+        { page: 38, pic: "🩺", words: ["I", "met", "the", "pet", "at", "the", "vet."] },
+        {
+          page: 39,
+          pic: "✈️",
+          words: [
+            "Red", "bets", "she", "gets", "a", "jet.",
+            "Yet,", "she", "will", "not", "let", "me", "set",
+            "the", "wet", "pet", "in", "the", "jet.",
+          ],
+        },
+      ],
+    },
+    // ----- Short Vowel I -----
+    {
+      id: "ig",
+      family: "ig",
+      title: "The Pig",
+      pages: "40–42",
+      words: [
+        { word: "Big", pic: "🐘" },
+        { word: "Jig", pic: "💃" },
+        { word: "Pig", pic: "🐷" },
+        { word: "Wig", pic: "👱" },
+        { word: "Zig", pic: "⚡" },
+      ],
+      sight: ["Is", "A", "With", "As", "He"],
+      sentences: [
+        { page: 41, pic: "🐷", words: ["Jim", "is", "a", "big", "pig."] },
+        {
+          page: 42,
+          pic: "👱",
+          words: ["Jim", "zigs", "as", "he", "jigs.", "Jim", "is", "with", "a", "wig."],
+        },
+      ],
+    },
+    {
+      id: "in",
+      family: "in",
+      title: "Win",
+      pages: "43–46",
+      words: [
+        { word: "Bin", pic: "🗑️" },
+        { word: "Fin", pic: "🐟" },
+        { word: "In", pic: "📥" },
+        { word: "Pin", pic: "📌" },
+        { word: "Tin", pic: "🥫" },
+        { word: "Win", pic: "🏆" },
+      ],
+      sight: ["Has", "A", "Is", "The", "In"],
+      sentences: [
+        { page: 44, pic: "🗑️", words: ["Jim", "is", "in", "the", "bin."] },
+        { page: 45, pic: "🐟", words: ["Jim", "has", "a", "fin."] },
+        { page: 46, pic: "🏆", words: ["Jim", "wins", "a", "tin", "pin."] },
+      ],
+    },
+    {
+      id: "it",
+      family: "it",
+      title: "The Fit",
+      pages: "47–50",
+      words: [
+        { word: "Bit", pic: "🦷" },
+        { word: "Fit", pic: "💪" },
+        { word: "Hit", pic: "👊" },
+        { word: "Kit", pic: "👑" },
+        { word: "Sit", pic: "🪑" },
+        { word: "It", pic: "👉" },
+      ],
+      sight: ["Has", "That", "A", "To", "It", "Is", "Said", "Sorry"],
+      sentences: [
+        {
+          page: 48,
+          pic: "👑",
+          words: ["Kit", "has", "a", "fit", "that", "Jim", "wins.", "Kit", "hit.", "Kit", "bit."],
+        },
+        {
+          page: 49,
+          pic: "🪑",
+          words: ["Kit", "sits.", "It", "is", "sad", "to", "sit."],
+        },
+        { page: 50, pic: "🗣️", words: ["Kit", "said,", "“Sorry", "Jim!”"] },
+      ],
+    },
+    {
+      id: "im",
+      family: "im",
+      title: "Kim",
+      pages: "51–53",
+      words: [
+        { word: "Him", pic: "👦" },
+        { word: "Jim", pic: "🐷" },
+        { word: "Kim", pic: "🦁" },
+        { word: "Rim", pic: "⭕" },
+      ],
+      sight: ["Has", "An", "Is", "Give", "It", "To"],
+      sentences: [
+        {
+          page: 52,
+          pic: "🍎",
+          words: ["Kim", "has", "an", "apple", "rim.", "Jim", "is", "sad."],
+        },
+        { page: 53, pic: "🤝", words: ["Kim", "gives", "it", "to", "him."] },
+      ],
+    },
+    {
+      id: "id",
+      family: "id",
+      title: "Hid",
+      pages: "54–57",
+      words: [
+        { word: "Did", pic: "❓" },
+        { word: "Hid", pic: "🙈" },
+        { word: "Kid", pic: "🧒" },
+        { word: "Lid", pic: "📦" },
+      ],
+      sight: ["Did", "See", "The", "In"],
+      sentences: [
+        { page: 55, pic: "🧸", words: ["Did", "Jim", "see", "the", "kid", "doll?"] },
+        { page: 56, pic: "📦", words: ["The", "kid", "doll", "hid", "in", "the", "lid."] },
+        {
+          page: 57,
+          pic: "🔍",
+          words: ["Jim", "sees", "the", "kid", "doll", "in", "the", "lid."],
+        },
+      ],
+    },
+    {
+      id: "ip",
+      family: "ip",
+      title: "Sip",
+      pages: "58–60",
+      words: [
+        { word: "Lip", pic: "👄" },
+        { word: "Sip", pic: "🥤" },
+        { word: "Dip", pic: "💧" },
+        { word: "Tip", pic: "👆" },
+        { word: "Hip", pic: "🕺" },
+      ],
+      sight: ["On", "His"],
+      sentences: [
+        { page: 59, pic: "💦", words: ["Jim", "dips.", "Jim", "tips", "on", "his", "hips."] },
+        { page: 60, pic: "🥤", words: ["Jim's", "lips", "sip."] },
+      ],
+    },
+    // ----- Short Vowel O -----
+    {
+      id: "og",
+      family: "og",
+      title: "Bob the Dog",
+      pages: "61–63",
+      words: [
+        { word: "Dog", pic: "🐕" },
+        { word: "Frog", pic: "🐸" },
+        { word: "Hog", pic: "🐗" },
+        { word: "Log", pic: "🪵" },
+      ],
+      sight: ["Is", "A", "See", "On", "And"],
+      sentences: [
+        { page: 62, pic: "🐕", words: ["Bob", "is", "a", "dog."] },
+        {
+          page: 63,
+          pic: "🐸",
+          words: ["Bob", "sees", "a", "frog", "on", "a", "log", "and", "a", "hog."],
+        },
+      ],
+    },
+    {
+      id: "ob",
+      family: "ob",
+      title: "A Job",
+      pages: "64–66",
+      words: [
+        { word: "Bob", pic: "🐕" },
+        { word: "Job", pic: "💼" },
+        { word: "Rob", pic: "🐶" },
+        { word: "Sob", pic: "😭" },
+      ],
+      sight: ["Has", "No", "Got", "A", "With"],
+      sentences: [
+        { page: 65, pic: "😭", words: ["Bob", "sobs.", "Bob", "has", "no", "job."] },
+        { page: 66, pic: "💼", words: ["Bob", "got", "a", "job", "with", "Rob."] },
+      ],
+    },
+    {
+      id: "op",
+      family: "op",
+      title: "The Cop",
+      pages: "67–69",
+      words: [
+        { word: "Cop", pic: "👮" },
+        { word: "Hop", pic: "🐰" },
+        { word: "Mop", pic: "🧹" },
+        { word: "Pop", pic: "🎈" },
+        { word: "Top", pic: "🔝" },
+        { word: "Stop", pic: "🛑" },
+      ],
+      sight: ["The", "See", "On", "Of", "A", "Said"],
+      sentences: [
+        {
+          page: 68,
+          pic: "👮",
+          words: ["The", "cop", "sees", "Bob", "hop", "on", "top", "of", "a", "mop."],
+        },
+        {
+          page: 69,
+          pic: "🛑",
+          words: ["The", "mop", "said,", "“Pop!”", "The", "cop", "said,", "“Stop!”"],
+        },
+      ],
+    },
+    {
+      id: "ot",
+      family: "ot",
+      title: "The Hot Dot",
+      pages: "70–72",
+      words: [
+        { word: "Dot", pic: "🔴" },
+        { word: "Got", pic: "🤲" },
+        { word: "Hot", pic: "🔥" },
+        { word: "Lot", pic: "🅿️" },
+        { word: "Pot", pic: "🍲" },
+      ],
+      sight: ["See", "The", "A"],
+      sentences: [
+        { page: 71, pic: "🔥", words: ["Bob", "sees", "the", "hot", "dot."] },
+        { page: 72, pic: "🍲", words: ["The", "pot", "got", "a", "lot", "hot."] },
+      ],
+    },
+    {
+      id: "od",
+      family: "od",
+      title: "The Hot Rod",
+      pages: "73–75",
+      words: [
+        { word: "Nod", pic: "🙆" },
+        { word: "Rod", pic: "🏎️" },
+        { word: "Sod", pic: "🌱" },
+      ],
+      sight: ["Go", "Said", "The", "On", "At", "Is"],
+      sentences: [
+        {
+          page: 74,
+          pic: "🏎️",
+          words: ["Bob", "is", "on", "the", "sod.", "Bob", "nods", "at", "the", "hot", "rod."],
+        },
+        { page: 75, pic: "🏁", words: ["Bob", "said,", "“Go", "hot", "rod!”"] },
+      ],
+    },
+    {
+      id: "ox",
+      family: "ox",
+      title: "The Box",
+      pages: "76–78",
+      words: [
+        { word: "Box", pic: "📦" },
+        { word: "Fox", pic: "🦊" },
+        { word: "Lox", pic: "🐟" },
+        { word: "Ox", pic: "🐂" },
+      ],
+      sight: ["Has", "A", "That", "Says", "In", "The", "Is", "An"],
+      sentences: [
+        {
+          page: 77,
+          pic: "📦",
+          words: ["Bob", "has", "a", "box", "that", "says,", "“Lox.”"],
+        },
+        {
+          page: 78,
+          pic: "🦊",
+          words: ["In", "the", "box", "is", "a", "fox", "and", "an", "ox."],
+        },
+      ],
+    },
+    // ----- Short Vowel U -----
+    {
+      id: "ug",
+      family: "ug",
+      title: "Mug the Bug",
+      pages: "79–81",
+      words: [
+        { word: "Bug", pic: "🐛" },
+        { word: "Dug", pic: "🐶" },
+        { word: "Hug", pic: "🤗" },
+        { word: "Mug", pic: "🐞" },
+        { word: "Rug", pic: "🟫" },
+        { word: "Tug", pic: "🪢" },
+      ],
+      sight: ["The", "And", "A", "On"],
+      sentences: [
+        { page: 80, pic: "🤗", words: ["Mug", "the", "bug", "hugs", "Dug."] },
+        { page: 81, pic: "🪢", words: ["Mug", "and", "Dug", "tug", "on", "a", "rug."] },
+      ],
+    },
+    {
+      id: "funpup",
+      family: "up",
+      title: "The Fun Pup",
+      pages: "82–84",
+      words: [
+        { word: "Cup", pic: "☕" },
+        { word: "Pup", pic: "🐶" },
+        { word: "Up", pic: "⬆️" },
+        { word: "Fun", pic: "🎉", family: "un" },
+        { word: "Run", pic: "🏃", family: "un" },
+        { word: "Sun", pic: "☀️", family: "un" },
+      ],
+      sight: ["The", "Has", "In", "See", "Up", "On"],
+      sentences: [
+        {
+          page: 83,
+          pic: "☀️",
+          words: ["The", "pup", "runs", "in", "the", "sun.", "The", "pup", "has", "fun."],
+        },
+        {
+          page: 84,
+          pic: "☕",
+          words: ["The", "pup", "sees", "Mug", "up", "on", "the", "cup."],
+        },
+      ],
+    },
+    {
+      id: "ut",
+      family: "ut",
+      title: "The Nut",
+      pages: "85–86",
+      words: [
+        { word: "But", pic: "✋" },
+        { word: "Cut", pic: "✂️" },
+        { word: "Hut", pic: "🛖" },
+        { word: "Nut", pic: "🥜" },
+      ],
+      sight: ["Has", "A", "In", "The", "Can"],
+      sentences: [
+        {
+          page: 86,
+          pic: "🥜",
+          words: [
+            "Mug", "has", "a", "nut", "in", "the", "hut.",
+            "But,", "Mug", "can", "cut", "the", "nut.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "um",
+      family: "um",
+      title: "Gum",
+      pages: "87–89",
+      words: [
+        { word: "Gum", pic: "🫧" },
+        { word: "Hum", pic: "🎶" },
+        { word: "Tum", pic: "😋" },
+      ],
+      sight: ["On", "Is", "Her"],
+      sentences: [
+        { page: 88, pic: "🫧", words: ["Mug", "sits", "on", "gum."] },
+        { page: 89, pic: "🎶", words: ["Gum", "is", "on", "her", "tum.", "Hum."] },
+      ],
+    },
+    {
+      id: "ud",
+      family: "ud",
+      title: "Mud",
+      pages: "90–92",
+      words: [
+        { word: "Bud", pic: "🌱" },
+        { word: "Mud", pic: "🟤" },
+      ],
+      sight: ["The", "Ball", "In"],
+      sentences: [
+        {
+          page: 91,
+          pic: "⚾",
+          words: ["Mug's", "bud", "hit", "the", "ball", "in", "the", "mud."],
+        },
+        { page: 92, pic: "🎉", words: ["The", "End!"] },
       ],
     },
   ],

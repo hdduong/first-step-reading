@@ -97,10 +97,10 @@ export default function WordsTab({ lesson, speech }) {
               >
                 <PicFor pic={w.pic} size={56} />
               </div>
-              <FamilyWord word={w.word} family={lesson.family} size={32} />
+              <FamilyWord word={w.word} family={w.family || lesson.family} size={32} />
             </div>
             <div style={{ display: "flex", gap: 6 }}>
-              <Pill small bg={C.red} onClick={() => speech.soundOut(w.word, lesson.family)}>
+              <Pill small bg={C.red} onClick={() => speech.soundOut(w.word, w.family || lesson.family)}>
                 🧩 Sound it
               </Pill>
               <Pill small onClick={() => speech.sayWord(w.word)}>
@@ -123,9 +123,9 @@ export default function WordsTab({ lesson, speech }) {
           >
             <PicFor pic={popWord.pic} size={150} />
           </div>
-          <FamilyWord word={popWord.word} family={lesson.family} size={72} />
+          <FamilyWord word={popWord.word} family={popWord.family || lesson.family} size={72} />
           <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-            <Pill bg={C.red} onClick={() => speech.soundOut(popWord.word, lesson.family)}>
+            <Pill bg={C.red} onClick={() => speech.soundOut(popWord.word, popWord.family || lesson.family)}>
               🧩 Sound it
             </Pill>
             <Pill onClick={() => speech.sayWord(popWord.word)}>🔊 Say</Pill>
