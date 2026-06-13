@@ -20,7 +20,7 @@ export default defineConfig([
   },
   {
     // Test files, Playwright e2e specs, and config files run under Node tooling.
-    files: ['**/*.{test,spec}.{js,jsx}', 'e2e/**/*.{js,jsx}', '*.config.js'],
+    files: ['**/*.{test,spec}.{js,jsx}', 'e2e/**/*.{js,jsx}', 'server/**/*.{js,jsx}', '*.config.js'],
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
     rules: { 'react-refresh/only-export-components': 'off' },
   },
