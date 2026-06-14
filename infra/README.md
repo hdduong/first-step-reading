@@ -52,5 +52,6 @@ Set `AZURE_WEBAPP_NAME` (your `appName`) in `.github/workflows/deploy.yml`, add 
 `AZURE_WEBAPP_PUBLISH_PROFILE` secret (App Service → **Get publish profile**), and
 run the **Deploy to Azure App Service** workflow.
 
-> Free (**F1**) tier is fine to start. Custom domains + HTTPS (e.g.
-> `firststepreadingapp.com`) need **B1** or higher — bump `sku` in `main.bicep`.
+> **B1** is the default because FirstStepReading serves bundled MP3/MP4 media
+> and custom domains + HTTPS (e.g. `firststepreadingapp.com`) require B1 or higher.
+> You can still pass `sku=F1` manually for a throwaway test without a custom domain.

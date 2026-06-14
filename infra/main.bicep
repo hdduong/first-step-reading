@@ -10,8 +10,8 @@ param appName string
 @description('Azure region for the resources.')
 param location string = resourceGroup().location
 
-@description('App Service plan SKU. F1 = free; B1+ is required for custom domains and HTTPS.')
-param sku string = 'F1'
+@description('App Service plan SKU. B1 is the default because this app serves bundled MP3/MP4 media and needs custom domain SSL support.')
+param sku string = 'B1'
 
 @description('Node LTS version for the Linux runtime.')
 param nodeVersion string = '20-lts'
