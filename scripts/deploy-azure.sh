@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Deploy FirstStepReading to Azure App Service.
+#
+# IDs are read from the environment or a gitignored ./.env.azure file — never
+# hardcoded here, so this script is safe to commit to a public repo.
+#
+# Required: AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
+# Optional: APP_NAME, RESOURCE_GROUP, LOCATION
+#
+# Create .env.azure (it is git-ignored) with, e.g.:
+#   AZURE_TENANT_ID=<your-tenant-id>
+#   AZURE_SUBSCRIPTION_ID=<your-subscription-id>
+#   APP_NAME=firststepreadingapp
+
+# Load local, untracked config if present.
+[ -f .env.azure ] && { set -a; . ./.env.azure; set +a; }
+
+: "${AZURE_TENANT_ID:?Set AZURE_TENANT_ID (e.g. in a gitignored .env.azure)}"
+: "${AZURE_SUBSCRIPTION_ID:?Set AZURE_SUBSCRIPTION_ID (e.g. in a gitignored .env.azure)}"
+APP_NAME="${APP_NAME:-firststepreadingapp}"        # must be globally unique
+RESOURCE_GROUP="${RESOURCE_GROUP:-firststepreading-rg}"
+LOCATION="${LOCATION:-eastus}"
+
+[ -f infra/main.bicep ] || { echo "Run from the repo root (infra/main.bicep not found)." >&2; exit 1; }
+
+echo "==> Sign in to tenant"
+az login --tenant "$AZURE_TENANT_ID" >/dev/null    # add --use-device-code if no browser
+az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+echo "    Subscription: $(az account show --query name -o tsv)"
+
+echo "==> Provision infrastructure (Bicep)"
+az group create -n "$RESOURCE_GROUP" -l "$LOCATION" -o none
+az deployment group create -g "$RESOURCE_GROUP" -f infra/main.bicep -p appName="$APP_NAME" -o none
+
+echo "==> Build & package"
+npm ci
+npm run build
+npm prune --omit=dev
+rm -f app.zip
+zip -r app.zip dist server package.json package-lock.json node_modules >/dev/null
+
+echo "==> Deploy"
+az webapp deploy -g "$RESOURCE_GROUP" -n "$APP_NAME" --src-path app.zip --type zip
+
+echo "==> Restore dev deps"
+npm install >/dev/null
+
+URL="https://$APP_NAME.azurewebsites.net"
+echo ""
+echo "✅ Done.  App:    $URL"
+echo "          Health: $URL/api/health"

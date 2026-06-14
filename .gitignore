@@ -28,3 +28,7 @@ dist-ssr
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Azure deploy — local IDs + build artifact (never commit)
+.env.azure
+app.zip
