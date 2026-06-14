@@ -48,9 +48,9 @@ az deployment group create -g firststepreading-rg -f infra/main.bicep -p appName
 
 ## Then deploy the code
 
-Set `AZURE_WEBAPP_NAME` (your `appName`) in `.github/workflows/deploy.yml`, add the
-`AZURE_WEBAPP_PUBLISH_PROFILE` secret (App Service → **Get publish profile**), and
-run the **Deploy to Azure App Service** workflow.
+The deploy workflow targets the existing `firststepreadingapp` App Service. Add
+the `AZURE_WEBAPP_PUBLISH_PROFILE` secret (App Service → **Get publish profile**),
+then run the **Deploy to Azure App Service** workflow from GitHub Actions.
 
 > **B1** is the default because FirstStepReading serves bundled MP3/MP4 media
 > and custom domains + HTTPS (e.g. `firststepreadingapp.com`) require B1 or higher.

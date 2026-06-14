@@ -32,3 +32,4 @@ dist-ssr
 # Azure deploy — local IDs + build artifact (never commit)
 .env.azure
 app.zip
+app-package/
