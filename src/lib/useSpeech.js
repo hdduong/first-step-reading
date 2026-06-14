@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { hasClip, clipUrl } from "./audio.js";
+import { clipUrl, resolveClip } from "./audio.js";
+import {
+  DEFAULT_VOICE_PACK_ID,
+  VOICE_PACKS,
+  voicePackById,
+} from "../data/voicePacks.js";
 import { wordToken, soundOutTokens, spellTokens, vowelIntroTokens } from "./phonics.js";
-import { DEFAULT_VOICE_ID } from "./voices.js";
 
 export const SPEEDS = [
   ["Slow", 0.85],
@@ -14,27 +18,32 @@ export const SPEEDS = [
 export function useSpeech() {
   const [voiceList, setVoiceList] = useState([]);
   const [voiceName, setVoiceName] = useState("");
+  const [voicePackId, setVoicePackId] = useState(() => {
+    if (typeof window === "undefined") return DEFAULT_VOICE_PACK_ID;
+    return (
+      window.localStorage.getItem("firststepreading.voicePackId") ||
+      DEFAULT_VOICE_PACK_ID
+    );
+  });
   const [speed, setSpeed] = useState(1);
   const [speakingKey, setSpeakingKey] = useState(null);
-
-  // Which voice the picker has selected: an ElevenLabs voice id, or DEVICE_VOICE
-  // for the built-in offline voice. Persisted so the choice sticks. The actual
-  // ElevenLabs synthesis is wired separately (see the seam in `speak` below);
-  // voiceIdRef lets that code read the current selection.
-  const [voiceId, setVoiceIdState] = useState(() => {
-    try {
-      return localStorage.getItem("fsr.voiceId") || DEFAULT_VOICE_ID;
-    } catch {
-      return DEFAULT_VOICE_ID;
-    }
-  });
-  const voiceIdRef = useRef(voiceId);
   const voiceRef = useRef(null);
+  const activeVoicePack = voicePackById(voicePackId);
+  const voicePackRef = useRef(activeVoicePack);
   const speedRef = useRef(1);
   const audioRef = useRef(null);
   const runRef = useRef(0); // bumped on cancel to abort an in-flight sequence
 
   const canSpeak = typeof window !== "undefined" && "speechSynthesis" in window;
+
+  useEffect(() => {
+    voicePackRef.current = activeVoicePack;
+    if (typeof window !== "undefined")
+      window.localStorage.setItem(
+        "firststepreading.voicePackId",
+        activeVoicePack.id,
+      );
+  }, [activeVoicePack]);
 
   useEffect(() => {
     if (!canSpeak) return;
@@ -118,14 +127,9 @@ export function useSpeech() {
         i++;
         next();
       };
-      // --- ElevenLabs voice seam (wired separately by the EL integration) ---
-      // When a cloud voice is selected (voiceIdRef.current !== DEVICE_VOICE) and
-      // an API key is available, synthesize `t.say` with that voice here: set
-      // audioRef.current to the playing audio and call done() when it ends
-      // (fall back to speakText on error). Until that is wired, playback falls
-      // through to recorded clips / the device voice below.
-      if (hasClip(t.clip)) {
-        const a = new Audio(clipUrl(t.clip));
+      const resolvedClip = resolveClip(t.clip, voicePackRef.current);
+      if (resolvedClip) {
+        const a = new Audio(clipUrl(resolvedClip));
         a.playbackRate = clipRate;
         audioRef.current = a;
         a.onended = done;
@@ -158,26 +162,21 @@ export function useSpeech() {
     const v = voiceList.find((x) => x.name === name);
     if (v) voiceRef.current = v;
   };
+  const pickVoicePack = (id) => {
+    const pack = voicePackById(id);
+    voicePackRef.current = pack;
+    setVoicePackId(pack.id);
+  };
   const changeSpeed = (v) => {
     setSpeed(v);
     speedRef.current = v;
   };
 
-  // Picker selection: an ElevenLabs voice id, or DEVICE_VOICE. Cancels any
-  // in-flight playback so the next sound uses the new voice.
-  const setVoice = (id) => {
-    cancel();
-    setVoiceIdState(id);
-    voiceIdRef.current = id;
-    try {
-      localStorage.setItem("fsr.voiceId", id);
-    } catch {
-      /* ignore */
-    }
-  };
-
   return {
     canSpeak,
+    voicePacks: VOICE_PACKS,
+    voicePackId: activeVoicePack.id,
+    activeVoicePack,
     voiceList,
     voiceName,
     speed,
@@ -189,10 +188,9 @@ export function useSpeech() {
     spellWord,
     playVowelIntro,
     testVoice,
+    pickVoicePack,
     pickVoice,
     changeSpeed,
-    voiceId,
-    setVoice,
     cancel,
   };
 }

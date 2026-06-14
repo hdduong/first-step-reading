@@ -69,3 +69,53 @@ npm run dev              # the app now uses your recorded clips
 ```
 
 Commit `public/audio/**` and the regenerated `src/lib/clips-manifest.js`.
+
+## 5. Generate ElevenLabs voice packs
+
+For generated voices, keep the API key local. Copy `.env.example` to
+`.env.local`, then fill in `ELEVENLABS_API_KEY`. Files ending in `.local` are
+ignored by Git.
+
+List the configured voices:
+
+```bash
+npm run audio:elevenlabs -- --voices
+```
+
+Fetch the real ElevenLabs voice names and labels from the API:
+
+```bash
+npm run audio:elevenlabs -- --voices --fetch
+```
+
+If a voice ID is not found, list the voices available to your API key:
+
+```bash
+npm run audio:elevenlabs -- --available-voices
+```
+
+Generate a small test set first:
+
+```bash
+npm run audio:elevenlabs -- --voice elevenlabs-alice --folder words --limit 8
+npm run audio:manifest
+```
+
+The generated files are written under one folder per voice:
+
+```text
+public/audio/elevenlabs/alice/words/cat.mp3
+public/audio/elevenlabs/matilda/words/cat.mp3
+```
+
+After you like a voice, generate more clips:
+
+```bash
+npm run audio:elevenlabs -- --voice elevenlabs-alice --folder words
+npm run audio:elevenlabs -- --voice elevenlabs-alice --folder sounds
+npm run audio:elevenlabs -- --voice elevenlabs-alice --folder letters
+npm run audio:manifest
+```
+
+Use `--all` only when you are ready to spend credits on every configured
+ElevenLabs voice.

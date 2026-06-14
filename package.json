@@ -14,7 +14,9 @@
     "start": "node server/index.js",
     "audio:list": "node scripts/list-clips.mjs",
     "audio:cut": "node scripts/cut-clips.mjs",
-    "audio:manifest": "node scripts/build-audio-manifest.mjs"
+    "audio:elevenlabs": "node scripts/generate-elevenlabs-audio.mjs",
+    "audio:manifest": "node scripts/build-audio-manifest.mjs",
+    "video:import": "node scripts/import-video-clips.mjs"
   },
   "dependencies": {
     "express": "^5.2.1",

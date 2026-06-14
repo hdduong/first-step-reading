@@ -4,6 +4,7 @@ import Pill from "../Pill.jsx";
 import FamilyWord from "../FamilyWord.jsx";
 import PicFor from "../PicFor.jsx";
 import PopOut from "../PopOut.jsx";
+import VideoClipButton from "../VideoClipButton.jsx";
 import { VOWEL_INFO, vowelOf } from "../../lib/phonics.js";
 
 export default function WordsTab({ lesson, speech }) {
@@ -99,13 +100,14 @@ export default function WordsTab({ lesson, speech }) {
               </div>
               <FamilyWord word={w.word} family={w.family || lesson.family} size={32} />
             </div>
-            <div style={{ display: "flex", gap: 6 }}>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
               <Pill small bg={C.red} onClick={() => speech.soundOut(w.word, w.family || lesson.family)}>
                 🧩 Sound it
               </Pill>
               <Pill small onClick={() => speech.sayWord(w.word)}>
                 🔊 Say
               </Pill>
+              <VideoClipButton word={w.word} />
             </div>
           </div>
         ))}
@@ -129,6 +131,7 @@ export default function WordsTab({ lesson, speech }) {
               🧩 Sound it
             </Pill>
             <Pill onClick={() => speech.sayWord(popWord.word)}>🔊 Say</Pill>
+            <VideoClipButton word={popWord.word} small={false} />
           </div>
         </PopOut>
       )}

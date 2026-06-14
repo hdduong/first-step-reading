@@ -3,6 +3,7 @@ import { C, cardStyle, h2Style } from "../../theme.js";
 import Pill from "../Pill.jsx";
 import FamilyWord from "../FamilyWord.jsx";
 import PicFor from "../PicFor.jsx";
+import VideoClipButton from "../VideoClipButton.jsx";
 import { wordToken } from "../../lib/phonics.js";
 
 export default function ReadTab({ lesson, speech }) {
@@ -65,23 +66,33 @@ export default function ReadTab({ lesson, speech }) {
               {s.words.map((word, j) => {
                 const on = active.s === i && active.w === j;
                 return (
-                  <button
+                  <span
                     key={j}
-                    className="press"
-                    onClick={() => chipTap(i, j)}
                     style={{
-                      background: on ? C.yellow : C.sky,
-                      border: `2px solid ${on ? "#e3b416" : C.border}`,
-                      borderRadius: 14,
-                      padding: "8px 12px",
-                      cursor: "pointer",
-                      transform: on ? "scale(1.1)" : "none",
-                      transition: "all .15s",
-                      fontFamily: "inherit",
+                      display: "inline-flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 5,
                     }}
                   >
-                    <FamilyWord word={word} family={lesson.family} size={24} />
-                  </button>
+                    <button
+                      className="press"
+                      onClick={() => chipTap(i, j)}
+                      style={{
+                        background: on ? C.yellow : C.sky,
+                        border: `2px solid ${on ? "#e3b416" : C.border}`,
+                        borderRadius: 14,
+                        padding: "8px 12px",
+                        cursor: "pointer",
+                        transform: on ? "scale(1.1)" : "none",
+                        transition: "all .15s",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      <FamilyWord word={word} family={lesson.family} size={24} />
+                    </button>
+                    <VideoClipButton word={word} />
+                  </span>
                 );
               })}
             </div>
