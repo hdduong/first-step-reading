@@ -2,6 +2,7 @@ import { useState } from "react";
 import { C, cardStyle, ring, h2Style } from "../../theme.js";
 import Pill from "../Pill.jsx";
 import PopOut from "../PopOut.jsx";
+import VideoClipButton from "../VideoClipButton.jsx";
 
 export default function SightTab({ lesson, speech }) {
   // Tapping a sight word pops it large into the middle of the screen to hold a
@@ -58,13 +59,14 @@ export default function SightTab({ lesson, speech }) {
                 {w}
               </div>
             </div>
-            <div style={{ display: "flex", gap: 6 }}>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
               <Pill small onClick={() => speech.sayWord(w)}>
                 🔊 Say
               </Pill>
               <Pill small bg={C.pink} onClick={() => speech.spellWord(w)}>
                 🔡 Spell
               </Pill>
+              <VideoClipButton word={w} />
             </div>
           </div>
         ))}
@@ -89,6 +91,7 @@ export default function SightTab({ lesson, speech }) {
             <Pill bg={C.pink} onClick={() => speech.spellWord(popWord)}>
               🔡 Spell
             </Pill>
+            <VideoClipButton word={popWord} small={false} />
           </div>
         </PopOut>
       )}

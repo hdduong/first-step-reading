@@ -10,6 +10,11 @@ const EXT = "mp3";
 
 export const clipUrl = (key) => `${BASE}${key}.${EXT}`;
 export const hasClip = (key) => !!key && CLIPS.has(key);
+export const resolveClip = (key, voicePack) => {
+  if (!key || voicePack?.prefix === null) return null;
+  const packedKey = voicePack?.prefix ? `${voicePack.prefix}/${key}` : key;
+  return CLIPS.has(packedKey) ? packedKey : null;
+};
 
 // ---- Clip-key builders ----
 // These define the canonical file names. They are also imported by
