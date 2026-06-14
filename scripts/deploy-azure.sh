@@ -7,12 +7,13 @@ set -euo pipefail
 # hardcoded here, so this script is safe to commit to a public repo.
 #
 # Required: AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
-# Optional: APP_NAME, RESOURCE_GROUP, LOCATION
+# Optional: APP_NAME, RESOURCE_GROUP, LOCATION, SKU
 #
 # Create .env.azure (it is git-ignored) with, e.g.:
 #   AZURE_TENANT_ID=<your-tenant-id>
 #   AZURE_SUBSCRIPTION_ID=<your-subscription-id>
 #   APP_NAME=firststepreadingapp
+#   SKU=B1
 
 # Load local, untracked config if present.
 [ -f .env.azure ] && { set -a; . ./.env.azure; set +a; }
@@ -22,6 +23,21 @@ set -euo pipefail
 APP_NAME="${APP_NAME:-firststepreadingapp}"        # must be globally unique
 RESOURCE_GROUP="${RESOURCE_GROUP:-firststepreading-rg}"
 LOCATION="${LOCATION:-eastus}"
+SKU="${SKU:-B1}"                                  # B1+ supports custom domains and SSL
+DEV_DEPS_PRUNED=0
+
+restore_dev_deps() {
+  if [ "$DEV_DEPS_PRUNED" = "1" ]; then
+    echo "==> Restore dev deps"
+    if npm install >/dev/null; then
+      DEV_DEPS_PRUNED=0
+    else
+      echo "Warning: failed to restore dev dependencies. Run 'npm install' manually." >&2
+    fi
+  fi
+}
+
+trap restore_dev_deps EXIT
 
 [ -f infra/main.bicep ] || { echo "Run from the repo root (infra/main.bicep not found)." >&2; exit 1; }
 
@@ -32,20 +48,20 @@ echo "    Subscription: $(az account show --query name -o tsv)"
 
 echo "==> Provision infrastructure (Bicep)"
 az group create -n "$RESOURCE_GROUP" -l "$LOCATION" -o none
-az deployment group create -g "$RESOURCE_GROUP" -f infra/main.bicep -p appName="$APP_NAME" -o none
+az deployment group create -g "$RESOURCE_GROUP" -f infra/main.bicep -p appName="$APP_NAME" sku="$SKU" -o none
 
 echo "==> Build & package"
 npm ci
 npm run build
 npm prune --omit=dev
+DEV_DEPS_PRUNED=1
 rm -f app.zip
 zip -r app.zip dist server package.json package-lock.json node_modules >/dev/null
 
 echo "==> Deploy"
 az webapp deploy -g "$RESOURCE_GROUP" -n "$APP_NAME" --src-path app.zip --type zip
 
-echo "==> Restore dev deps"
-npm install >/dev/null
+restore_dev_deps
 
 URL="https://$APP_NAME.azurewebsites.net"
 echo ""

@@ -1,4 +1,4 @@
 using './main.bicep'
 
 param appName = 'firststepreading'
-param sku = 'F1'
+param sku = 'B1'
