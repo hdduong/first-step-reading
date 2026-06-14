@@ -7,7 +7,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: firststepreadingapp
-  NODE_VERSION: 20
+  NODE_VERSION: 22
   PACKAGE_DIR: app-package
 
 jobs:
