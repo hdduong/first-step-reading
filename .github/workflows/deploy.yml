@@ -1,12 +1,15 @@
 name: Deploy to Azure App Service
 
-# Manual for now. Once the App Service exists and the publish-profile secret is
-# set, add `push: { branches: [main] }` here to deploy automatically on merge.
+# Deploys on every push to main, and on demand from the Actions tab.
+# Requires the AZURE_WEBAPP_PUBLISH_PROFILE secret (App Service -> Get publish profile).
+# For manual-only, delete the `push:` block below.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: firststepreading # <-- change to your App Service name
+  AZURE_WEBAPP_NAME: firststepreadingapp
   NODE_VERSION: 20
 
 jobs:
@@ -22,8 +25,12 @@ jobs:
       - run: npm run build
       # Slim node_modules to runtime deps (drops vite/eslint/etc.) before deploy.
       - run: npm prune --omit=dev
+      # Package only the runtime files (built SPA + server + prod deps), not the
+      # raw sources/tests. Linux zip uses forward-slash paths, so Kudu/rsync is happy.
+      - name: Package runtime files
+        run: zip -r -q app.zip dist server package.json package-lock.json node_modules
       - uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: .
+          package: app.zip
