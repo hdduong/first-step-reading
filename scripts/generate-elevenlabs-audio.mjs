@@ -166,6 +166,13 @@ const outputFormat =
   process.env.ELEVENLABS_OUTPUT_FORMAT || "mp3_44100_128";
 const delayMs = Number(process.env.ELEVENLABS_DELAY_MS || 250);
 
+const TEXT_OVERRIDES = {
+  "elevenlabs-sarah": {
+    "sounds/rime-an": "Ann",
+    "words/van": "vann",
+  },
+};
+
 let packs;
 if (voiceFilter) {
   packs = ELEVENLABS_VOICE_PACKS.filter(
@@ -243,10 +250,13 @@ for (const pack of packs) {
       console.log(`  skip ${clipKey}`);
       continue;
     }
-    console.log(`  ${dryRun ? "would write" : "write"} ${clipKey}: ${text}`);
+    const spokenText = TEXT_OVERRIDES[pack.id]?.[clipKey] || text;
+    console.log(
+      `  ${dryRun ? "would write" : "write"} ${clipKey}: ${spokenText}`,
+    );
     if (!dryRun) {
       mkdirSync(dirname(out), { recursive: true });
-      writeFileSync(out, await requestAudio(pack, text));
+      writeFileSync(out, await requestAudio(pack, spokenText));
       written++;
       if (delayMs > 0) await sleep(delayMs);
     }

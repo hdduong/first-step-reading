@@ -22,7 +22,7 @@ export const VIDEO_CLIPS = {
       "word": "an",
       "disk": "Disk1",
       "path": "Disk1/003_an_004220.mp4",
-      "approxTime": "00:42:20"
+      "approxTime": "00:42:25"
     }
   ],
   "are": [
@@ -108,13 +108,7 @@ export const VIDEO_CLIPS = {
       "word": "can",
       "disk": "Disk1",
       "path": "Disk1/009_can_004620.mp4",
-      "approxTime": "00:46:20"
-    },
-    {
-      "word": "can",
-      "disk": "Disk1",
-      "path": "Disk1/044_can_010700.mp4",
-      "approxTime": "01:07:00"
+      "approxTime": "00:46:22"
     }
   ],
   "cap": [
