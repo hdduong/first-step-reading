@@ -215,6 +215,7 @@ export default function App() {
                 <VoiceSettings speech={speech} />
                 <TabEl
                   key={`${book.id}-${lessonIdx}`}
+                  book={book}
                   lesson={lesson}
                   speech={speech}
                 />

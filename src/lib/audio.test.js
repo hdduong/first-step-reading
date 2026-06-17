@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { wordKey, letterKey, soundKey, clipUrl, hasClip } from "./audio.js";
+import {
+  wordKey,
+  letterKey,
+  soundKey,
+  sentenceKey,
+  clipUrl,
+  hasClip,
+} from "./audio.js";
 
 describe("clip key builders", () => {
   it("slugs words (lowercase, alphanumeric only)", () => {
@@ -12,6 +19,10 @@ describe("clip key builders", () => {
     expect(soundKey("onset", "c")).toBe("sounds/onset-c");
     expect(soundKey("rime", "at")).toBe("sounds/rime-at");
     expect(soundKey("vowel", "a")).toBe("sounds/vowel-a");
+  });
+
+  it("builds sentence keys from book, lesson, and page", () => {
+    expect(sentenceKey("Book 1", "an", 8)).toBe("sentences/book1-an-page-8");
   });
 });
 
