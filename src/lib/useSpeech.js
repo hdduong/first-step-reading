@@ -5,7 +5,12 @@ import {
   VOICE_PACKS,
   voicePackById,
 } from "../data/voicePacks.js";
-import { wordToken, soundOutTokens, spellTokens, vowelIntroTokens } from "./phonics.js";
+import {
+  speechWordToken,
+  soundOutTokens,
+  spellTokens,
+  vowelIntroTokens,
+} from "./phonics.js";
 
 export const SPEEDS = [
   ["Slow", 0.85],
@@ -146,16 +151,25 @@ export function useSpeech() {
   };
 
   // ---- High-level actions ----
-  const sayWord = (word, key) => speak([wordToken(word)], key ?? `w-${word}`);
+  const sayWord = (word, key) =>
+    speak([speechWordToken(word)], key ?? `w-${word}`);
   const soundOut = (word, family) =>
     speak(soundOutTokens(word, family), `w-${word}`, { rate: 0.72 });
   const spellWord = (word) => speak(spellTokens(word), `s-${word}`, { rate: 0.85 });
   const playVowelIntro = (family) =>
     speak(vowelIntroTokens(family), "aa", { rate: 0.72 });
   const testVoice = () =>
-    speak([wordToken("Hello"), wordToken("Mat"), wordToken("is"), wordToken("a"), wordToken("rat")], "test", {
-      rate: 0.85,
-    });
+    speak(
+      [
+        speechWordToken("Hello"),
+        speechWordToken("Mat"),
+        speechWordToken("is"),
+        speechWordToken("a"),
+        speechWordToken("rat"),
+      ],
+      "test",
+      { rate: 0.85 },
+    );
 
   const pickVoice = (name) => {
     setVoiceName(name);

@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   vowelOf,
   cleanWord,
+  speechWordToken,
   soundOutTokens,
   spellTokens,
   vowelIntroTokens,
@@ -51,8 +52,15 @@ describe("soundOutTokens", () => {
     ]);
   });
 
-  it("uses the whole word instead of a standalone v cue", () => {
-    expect(says(soundOutTokens("Van", "an"))).toEqual(["Van", "an", "Van"]);
+  it("uses a letter-name cue instead of a standalone v sound", () => {
+    expect(says(soundOutTokens("Van", "an"))).toEqual(["V", "an", "Vann"]);
+  });
+});
+
+describe("speechWordToken", () => {
+  it("bypasses recorded clips for words with fragile v pronunciation", () => {
+    expect(speechWordToken("Van")).toEqual({ say: "Vann", clip: null });
+    expect(speechWordToken("Vet")).toEqual({ say: "Vett", clip: null });
   });
 });
 

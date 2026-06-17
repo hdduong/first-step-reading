@@ -26,6 +26,10 @@ export const DIGRAPH_SOUND = {
 };
 const DIGRAPHS = Object.keys(DIGRAPH_SOUND);
 const CONNECTED_ONSET_CUES = new Set(["v"]);
+const WORD_PRONUNCIATION_OVERRIDES = {
+  van: "Vann",
+  vet: "Vett",
+};
 
 // The short vowel a family is built on: "at"/"an" → "a", "et" → "e", "ig" → "i".
 export const vowelOf = (family) => family[0].toLowerCase();
@@ -43,6 +47,12 @@ export const shuffle = (arr) =>
 // fallback; `clip` is the recorded-clip key to prefer when that clip exists.
 
 export const wordToken = (word) => ({ say: cleanWord(word), clip: wordKey(word) });
+
+export const speechWordToken = (word) => {
+  const clean = cleanWord(word);
+  const override = WORD_PRONUNCIATION_OVERRIDES[clean.toLowerCase()];
+  return override ? { say: override, clip: null } : wordToken(word);
+};
 
 // Sound a consonant cluster left to right, treating digraphs as one sound and
 // keying each piece under `kind` (onset/end): "c" → [kuh], "th" → [thuh],
@@ -86,9 +96,9 @@ export const soundOutTokens = (word, family) => {
     : lower.slice(0, 1);
   if (CONNECTED_ONSET_CUES.has(onset)) {
     return [
-      wordToken(word),
+      { say: onset.toUpperCase(), clip: letterKey(onset) },
       { say: family, clip: soundKey("rime", family) },
-      whole,
+      speechWordToken(word),
     ];
   }
   return [

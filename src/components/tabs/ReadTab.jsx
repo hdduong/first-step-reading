@@ -4,7 +4,7 @@ import Pill from "../Pill.jsx";
 import FamilyWord from "../FamilyWord.jsx";
 import PicFor from "../PicFor.jsx";
 import VideoClipButton from "../VideoClipButton.jsx";
-import { wordToken } from "../../lib/phonics.js";
+import { speechWordToken } from "../../lib/phonics.js";
 
 export default function ReadTab({ lesson, speech }) {
   // Which word is currently lit up: { s: sentence index, w: word index }.
@@ -12,14 +12,14 @@ export default function ReadTab({ lesson, speech }) {
 
   const chipTap = (i, j) => {
     const word = lesson.sentences[i].words[j];
-    speech.speak([wordToken(word)], undefined, { rate: 0.78 }, {
+    speech.speak([speechWordToken(word)], undefined, { rate: 0.78 }, {
       onStart: () => setActive({ s: i, w: j }),
       onEnd: () => setActive({ s: -1, w: -1 }),
     });
   };
 
   const playSentence = (i) => {
-    const tokens = lesson.sentences[i].words.map(wordToken);
+    const tokens = lesson.sentences[i].words.map(speechWordToken);
     speech.speak(tokens, `sent-${i}`, { rate: 0.68 }, {
       onStart: (j) => setActive({ s: i, w: j }),
       onEnd: () => setActive({ s: -1, w: -1 }),
