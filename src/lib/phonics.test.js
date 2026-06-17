@@ -5,6 +5,8 @@ import {
   soundOutTokens,
   spellTokens,
   vowelIntroTokens,
+  sentenceText,
+  sentenceToken,
   VOWEL_INFO,
 } from "./phonics.js";
 
@@ -67,5 +69,16 @@ describe("vowelIntroTokens", () => {
       info.word,
       "at",
     ]);
+  });
+});
+
+describe("sentenceToken", () => {
+  it("keeps sentence punctuation and builds a sentence clip key", () => {
+    const sentence = { page: 8, words: ["Dan", "is", "a", "man."] };
+    expect(sentenceText(sentence.words)).toBe("Dan is a man.");
+    expect(sentenceToken("book1", "an", sentence)).toEqual({
+      say: "Dan is a man.",
+      clip: "sentences/book1-an-page-8",
+    });
   });
 });

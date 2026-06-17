@@ -54,7 +54,7 @@ export const VIDEO_CLIPS = {
       "word": "bag",
       "disk": "Disk1",
       "path": "Disk1/049_bag_010940.mp4",
-      "approxTime": "01:09:40"
+      "approxTime": "01:09:44"
     }
   ],
   "ball": [
@@ -148,7 +148,7 @@ export const VIDEO_CLIPS = {
       "word": "dad",
       "disk": "Disk1",
       "path": "Disk1/048_dad_010920.mp4",
-      "approxTime": "01:09:20"
+      "approxTime": "01:09:31"
     }
   ],
   "did": [
@@ -244,7 +244,7 @@ export const VIDEO_CLIPS = {
       "word": "ham",
       "disk": "Disk1",
       "path": "Disk1/047_ham_010820.mp4",
-      "approxTime": "01:08:20"
+      "approxTime": "01:08:30"
     }
   ],
   "has": [
@@ -260,7 +260,7 @@ export const VIDEO_CLIPS = {
       "word": "have",
       "disk": "Disk1",
       "path": "Disk1/018_have_005200.mp4",
-      "approxTime": "00:52:00"
+      "approxTime": "00:52:03"
     }
   ],
   "hen": [
@@ -356,7 +356,7 @@ export const VIDEO_CLIPS = {
       "word": "jam",
       "disk": "Disk1",
       "path": "Disk1/046_jam_010800.mp4",
-      "approxTime": "01:08:00"
+      "approxTime": "01:08:04"
     }
   ],
   "job": [

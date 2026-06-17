@@ -1,4 +1,4 @@
-import { wordKey, letterKey, soundKey } from "./audio.js";
+import { wordKey, letterKey, soundKey, sentenceKey } from "./audio.js";
 
 // ---- Phonics sound tables ----
 // Short-vowel info drives both the spoken intro and the Words-tab header.
@@ -42,6 +42,13 @@ export const shuffle = (arr) =>
 // fallback; `clip` is the recorded-clip key to prefer when that clip exists.
 
 export const wordToken = (word) => ({ say: cleanWord(word), clip: wordKey(word) });
+
+export const sentenceText = (words) => words.join(" ");
+
+export const sentenceToken = (bookId, lessonId, sentence) => ({
+  say: sentenceText(sentence.words),
+  clip: sentenceKey(bookId, lessonId, sentence.page),
+});
 
 // Sound a consonant cluster left to right, treating digraphs as one sound and
 // keying each piece under `kind` (onset/end): "c" → [kuh], "th" → [thuh],

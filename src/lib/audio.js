@@ -25,3 +25,5 @@ const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "");
 export const wordKey = (word) => `words/${slug(word)}`;
 export const letterKey = (ch) => `letters/${slug(ch)}`;
 export const soundKey = (kind, id) => `sounds/${kind}-${slug(String(id))}`;
+export const sentenceKey = (bookId, lessonId, page) =>
+  `sentences/${slug(bookId)}-${slug(lessonId)}-page-${slug(String(page))}`;

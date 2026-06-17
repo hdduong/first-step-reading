@@ -12,9 +12,49 @@ export const SPEEDS = [
   ["Normal", 1],
 ];
 
+const wordWeight = (word) =>
+  Math.max(1, String(word).replace(/[^A-Za-z0-9]+/g, "").length);
+
+const progressWordIndex = (words, progress) => {
+  if (!words.length) return 0;
+  const safeProgress = Number.isFinite(progress)
+    ? Math.max(0, Math.min(1, progress))
+    : 0;
+  const total = words.reduce((sum, word) => sum + wordWeight(word), 0);
+  let target = total * safeProgress;
+  for (let i = 0; i < words.length; i++) {
+    target -= wordWeight(words[i]);
+    if (target <= 0) return i;
+  }
+  return words.length - 1;
+};
+
+const wordRanges = (words) => {
+  let cursor = 0;
+  return words.map((word) => {
+    const source = String(word);
+    const first = source.search(/[A-Za-z0-9]/);
+    const last = source.search(/[A-Za-z0-9][^A-Za-z0-9]*$/);
+    const start = cursor + (first === -1 ? 0 : first);
+    const end = cursor + (last === -1 ? source.length : last + 1);
+    cursor += source.length + 1;
+    return { start, end };
+  });
+};
+
+const wordIndexForChar = (ranges, charIndex) => {
+  if (!ranges.length) return 0;
+  const exact = ranges.findIndex(
+    ({ start, end }) => charIndex >= start && charIndex < end,
+  );
+  if (exact !== -1) return exact;
+  const next = ranges.findIndex(({ end }) => charIndex < end);
+  return next === -1 ? ranges.length - 1 : next;
+};
+
 // Owns all audio: prefers a recorded clip per token, falls back to the
-// device's speech synthesis. Tokens are spoken in sequence so the Read tab
-// can highlight each word as it plays.
+// device's speech synthesis. Tokens and phrases can report progress so the
+// Read tab can highlight each word as it plays.
 export function useSpeech() {
   const [voiceList, setVoiceList] = useState([]);
   const [voiceName, setVoiceName] = useState("");
@@ -83,6 +123,9 @@ export function useSpeech() {
     runRef.current++;
     if (canSpeak) window.speechSynthesis.cancel();
     if (audioRef.current) {
+      audioRef.current.onplay = null;
+      audioRef.current.onloadedmetadata = null;
+      audioRef.current.ontimeupdate = null;
       audioRef.current.onended = null;
       audioRef.current.onerror = null;
       audioRef.current.pause();
@@ -98,6 +141,30 @@ export function useSpeech() {
     u.pitch = opts.pitch ?? 1.15;
     u.lang = (voiceRef.current && voiceRef.current.lang) || "en-US";
     if (voiceRef.current) u.voice = voiceRef.current;
+    u.onend = done;
+    u.onerror = done;
+    window.speechSynthesis.speak(u);
+  };
+
+  const speakPhraseText = (phrase, words, rate, opts, cbs, done) => {
+    if (!canSpeak || !phrase?.say) return done();
+    const ranges = wordRanges(words);
+    const u = new SpeechSynthesisUtterance(phrase.say);
+    let lastIndex = -1;
+    const highlight = (index) => {
+      if (index === lastIndex) return;
+      lastIndex = index;
+      cbs.onStart && cbs.onStart(index);
+    };
+    u.rate = rate;
+    u.pitch = opts.pitch ?? 1.08;
+    u.lang = (voiceRef.current && voiceRef.current.lang) || "en-US";
+    if (voiceRef.current) u.voice = voiceRef.current;
+    u.onstart = () => highlight(0);
+    u.onboundary = (event) => {
+      if (typeof event.charIndex === "number")
+        highlight(wordIndexForChar(ranges, event.charIndex));
+    };
     u.onend = done;
     u.onerror = done;
     window.speechSynthesis.speak(u);
@@ -145,6 +212,49 @@ export function useSpeech() {
     }, 60);
   };
 
+  const speakPhrase = (phrase, words, key, opts = {}, cbs = {}) => {
+    cancel();
+    const run = runRef.current;
+    if (key !== undefined) setSpeakingKey(key);
+    const rate = Math.max(0.1, (opts.rate ?? 0.78) * speedRef.current);
+    const clipRate = Math.max(0.5, Math.min(1.2, speedRef.current));
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      setSpeakingKey((k) => (k === key ? null : k));
+      cbs.onEnd && cbs.onEnd();
+    };
+    const fallback = () => {
+      if (run !== runRef.current) return;
+      speakPhraseText(phrase, words, rate, opts, cbs, () => {
+        if (run === runRef.current) finish();
+      });
+    };
+    const highlight = (index) => {
+      if (run === runRef.current) cbs.onStart && cbs.onStart(index);
+    };
+    setTimeout(() => {
+      if (run !== runRef.current) return;
+      const resolvedClip = resolveClip(phrase.clip, voicePackRef.current);
+      if (!resolvedClip) return fallback();
+      const a = new Audio(clipUrl(resolvedClip));
+      audioRef.current = a;
+      a.playbackRate = clipRate;
+      a.onplay = () => highlight(0);
+      a.onloadedmetadata = () => highlight(0);
+      a.ontimeupdate = () => {
+        if (!Number.isFinite(a.duration) || a.duration <= 0) return;
+        highlight(progressWordIndex(words, a.currentTime / a.duration));
+      };
+      a.onended = () => {
+        if (run === runRef.current) finish();
+      };
+      a.onerror = fallback;
+      a.play().catch(fallback);
+    }, 60);
+  };
+
   // ---- High-level actions ----
   const sayWord = (word, key) => speak([wordToken(word)], key ?? `w-${word}`);
   const soundOut = (word, family) =>
@@ -183,6 +293,7 @@ export function useSpeech() {
     speakingKey,
     SPEEDS,
     speak,
+    speakPhrase,
     sayWord,
     soundOut,
     spellWord,

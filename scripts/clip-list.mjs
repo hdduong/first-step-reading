@@ -5,6 +5,7 @@
 import { BOOKS } from "../src/data/index.js";
 import {
   wordToken,
+  sentenceToken,
   soundOutTokens,
   spellTokens,
   vowelIntroTokens,
@@ -29,6 +30,7 @@ export function clipList() {
         spellTokens(s).forEach(add);
       }
       for (const sent of L.sentences) {
+        add(sentenceToken(book.id, L.id, sent));
         sent.words.forEach((word) => add(wordToken(word)));
       }
     }
