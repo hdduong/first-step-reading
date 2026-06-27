@@ -9,6 +9,9 @@ const CROSS_FAMILY_RIME_COLORS = {
   an: {
     at: C.green,
   },
+  am: {
+    at: C.green,
+  },
 };
 
 export const familyForWord = (word, preferredFamily) => {
