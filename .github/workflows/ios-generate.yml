@@ -1,0 +1,38 @@
+name: Generate iOS Project
+
+# Manual first step for the iOS app-store path.
+# Runs on macOS because Capacitor iOS project generation/sync uses Apple tooling.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: 22
+jobs:
+  generate-ios:
+    name: Generate Capacitor iOS project
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Generate or sync iOS project
+        run: |
+          if [ -d ios ]; then
+            npx --no-install cap sync ios
+          else
+            npx --no-install cap add ios
+            npx --no-install cap sync ios
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: capacitor-ios-project
+          path: ios/
+          if-no-files-found: error
+          retention-days: 7
