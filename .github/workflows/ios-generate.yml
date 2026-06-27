@@ -5,9 +5,11 @@ name: Generate iOS Project
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   NODE_VERSION: 22
-
 jobs:
   generate-ios:
     name: Generate Capacitor iOS project
