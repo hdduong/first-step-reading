@@ -8,15 +8,18 @@ describe("family colors", () => {
     expect(familyRimeColor("at", "at")).toBe(C.red);
   });
 
-  it("uses green for -at only when it appears inside the -an lesson", () => {
+  it("uses green for -at when it appears inside the -an or -am lessons", () => {
     expect(familyRimeColor("at", "an")).toBe(C.green);
+    expect(familyRimeColor("at", "am")).toBe(C.green);
   });
 
-  it("falls back to -at when a word appears inside the -an lesson", () => {
+  it("falls back to -at when a word appears inside the -an or -am lessons", () => {
     expect(familyForWord("rat", "an")).toBe("at");
+    expect(familyForWord("Mat", "am")).toBe("at");
+    expect(familyForWord("Pat", "am")).toBe("at");
   });
 
-  it("does not fall back to -at outside the explicit -an/-at color lessons", () => {
-    expect(familyForWord("Mat", "am")).toBeUndefined();
+  it("does not fall back to -at outside the explicit cross-family color lessons", () => {
+    expect(familyForWord("Mat", "ad")).toBeUndefined();
   });
 });
