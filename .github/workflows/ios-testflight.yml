@@ -20,9 +20,36 @@ env:
 jobs:
   upload-testflight:
     name: Build and upload iOS app
-    runs-on: macos-latest
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
+
+      - name: Select Xcode 26
+        run: |
+          XCODE_PATH="/Applications/Xcode_26.5.app"
+          if [ ! -d "$XCODE_PATH" ]; then
+            XCODE_PATH="$(python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          def version_key(path):
+              match = re.search(r"Xcode_(\d+(?:\.\d+)*).*\.app$", path.name)
+              if not match:
+                  return ()
+              return tuple(int(part) for part in match.group(1).split("."))
+
+          paths = [path for path in Path("/Applications").glob("Xcode_26*.app") if path.is_dir()]
+          if paths:
+              print(max(paths, key=version_key))
+          PY
+          )"
+          fi
+          if [ ! -d "$XCODE_PATH" ]; then
+            echo "::error::Xcode 26 is required for App Store Connect uploads."
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+          xcodebuild -version
 
       - uses: actions/setup-node@v4
         with:

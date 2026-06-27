@@ -29,6 +29,8 @@ APP_STORE_CONNECT_API_KEY
 
 Run **Upload iOS to TestFlight** from the GitHub Actions tab.
 
+The workflow uses GitHub's `macos-26` runner and selects Xcode 26, because App Store Connect rejects iOS uploads built with older SDKs.
+
 The workflow:
 
 1. Installs npm dependencies.
