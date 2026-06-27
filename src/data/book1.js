@@ -82,7 +82,7 @@ export default {
         {
           page: 10,
           pic: "🍳",
-          words: ["Dan", "has", "a", "pan.", "Dan", "said,", "“Not", "rat!”"],
+          words: ["Dan", "has", "a", "pan.", "Dan", "said,", "“Not", "rats!”"],
         },
         {
           page: 11,
