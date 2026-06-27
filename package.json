@@ -15,6 +15,10 @@
     "test:e2e": "playwright test",
     "preview": "vite preview",
     "start": "node server/index.js",
+    "cap": "cap",
+    "cap:sync": "npm run build && cap sync",
+    "ios:add": "cap add ios",
+    "ios:sync": "npm run build && cap sync ios",
     "audio:list": "node scripts/list-clips.mjs",
     "audio:cut": "node scripts/cut-clips.mjs",
     "audio:elevenlabs": "node scripts/generate-elevenlabs-audio.mjs",
@@ -27,6 +31,9 @@
     "react-dom": "^19.2.6"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/ios": "^8.4.1",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.60.0",
     "@types/react": "^19.2.14",
