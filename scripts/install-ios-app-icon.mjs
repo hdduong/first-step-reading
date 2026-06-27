@@ -21,11 +21,27 @@ if (!icon.subarray(0, pngSignature.length).equals(pngSignature)) {
   throw new Error(`${sourceIcon} must be a PNG file`)
 }
 
+if (icon.length < 33) {
+  throw new Error(`${sourceIcon} is too small to be a valid PNG file`)
+}
+
+const ihdrLength = icon.readUInt32BE(8)
+const ihdrType = icon.subarray(12, 16).toString('ascii')
+
+if (ihdrLength !== 13 || ihdrType !== 'IHDR') {
+  throw new Error(`${sourceIcon} must start with a valid PNG IHDR chunk`)
+}
+
 const width = icon.readUInt32BE(16)
 const height = icon.readUInt32BE(20)
+const colorType = icon[25]
 
 if (width !== 1024 || height !== 1024) {
   throw new Error(`${sourceIcon} must be 1024x1024; found ${width}x${height}`)
+}
+
+if (colorType === 4 || colorType === 6) {
+  throw new Error(`${sourceIcon} must not include an alpha channel`)
 }
 
 mkdirSync(appIconSet, { recursive: true })
@@ -37,8 +53,8 @@ writeFileSync(
       images: [
         {
           filename: 'AppIcon-512@2x.png',
-          idiom: 'universal',
-          platform: 'ios',
+          idiom: 'ios-marketing',
+          scale: '1x',
           size: '1024x1024',
         },
       ],
