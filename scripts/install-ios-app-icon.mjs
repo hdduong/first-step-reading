@@ -48,6 +48,7 @@ if (bitDepth !== 8 || colorType !== 2) {
 }
 
 let chunkOffset = 8
+let foundIend = false
 
 while (chunkOffset + 8 <= icon.length) {
   const chunkLength = icon.readUInt32BE(chunkOffset)
@@ -63,10 +64,18 @@ while (chunkOffset + 8 <= icon.length) {
   }
 
   if (chunkType === 'IEND') {
+    if (chunkLength !== 0) {
+      throw new Error(`${sourceIcon} contains an invalid PNG IEND chunk`)
+    }
+    foundIend = true
     break
   }
 
   chunkOffset = nextChunkOffset
+}
+
+if (!foundIend) {
+  throw new Error(`${sourceIcon} is missing the required PNG IEND chunk`)
 }
 
 mkdirSync(appIconSet, { recursive: true })
