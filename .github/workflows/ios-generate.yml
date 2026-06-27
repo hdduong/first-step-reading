@@ -25,10 +25,10 @@ jobs:
       - name: Generate or sync iOS project
         run: |
           if [ -d ios ]; then
-            npx cap sync ios
+            npx --no-install cap sync ios
           else
-            npx cap add ios
-            npx cap sync ios
+            npx --no-install cap add ios
+            npx --no-install cap sync ios
           fi
       - uses: actions/upload-artifact@v4
         with:
