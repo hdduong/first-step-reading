@@ -63,6 +63,7 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/appstoreconnect"
           printf '%s' "$APP_STORE_CONNECT_API_KEY" > "$RUNNER_TEMP/appstoreconnect/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+          chmod 600 "$RUNNER_TEMP/appstoreconnect/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
 
       - name: Create export options
         env:
