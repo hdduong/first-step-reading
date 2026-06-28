@@ -55,6 +55,18 @@ test("voice picker is present with a default voice selected", async ({ page }) =
   await expect(picker).not.toHaveValue("");
 });
 
+test("footer links to the privacy policy", async ({ page }) => {
+  const privacyLink = page.getByRole("link", { name: "Privacy Policy" });
+  await expect(privacyLink).toHaveAttribute("href", "/privacy");
+
+  await privacyLink.click();
+
+  await expect(page).toHaveURL(/\/privacy$/);
+  await expect(
+    page.getByRole("heading", { name: "Privacy Policy" }),
+  ).toBeVisible();
+});
+
 test("privacy policy is available at /privacy", async ({ page }) => {
   await page.goto("/privacy");
   await expect(
