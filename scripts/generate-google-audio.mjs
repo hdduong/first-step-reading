@@ -110,8 +110,9 @@ const voiceFilter = argValue("--voice");
 const folderFilter = argValue("--folder");
 const clipFilter = argValue("--clip");
 const limit = Number(argValue("--limit") || 0);
-const speakingRate = Number(process.env.GOOGLE_TTS_SPEAKING_RATE || 1);
-const pitch = Number(process.env.GOOGLE_TTS_PITCH || 0);
+// Clamp to Google's accepted ranges so a typo can't 400 the whole run.
+const speakingRate = Math.min(2, Math.max(0.25, Number(process.env.GOOGLE_TTS_SPEAKING_RATE || 1)));
+const pitch = Math.min(20, Math.max(-20, Number(process.env.GOOGLE_TTS_PITCH || 0)));
 const delayMs = Number(process.env.GOOGLE_TTS_DELAY_MS || 120);
 
 let packs;

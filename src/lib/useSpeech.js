@@ -204,9 +204,16 @@ export function useSpeech() {
       const a = new Audio(ttsUrl(text, voicePackRef.current));
       a.playbackRate = Math.max(0.5, Math.min(1.2, speedRef.current));
       audioRef.current = a;
+      let toldDevice = false;
+      const toDevice = () => {
+        if (toldDevice) return; // error + rejected play() can both fire
+        toldDevice = true;
+        audioRef.current = null; // drop the dead TTS element before the device voice
+        speakText(text, rate, opts, done);
+      };
       a.onended = done;
-      a.onerror = () => speakText(text, rate, opts, done);
-      a.play().catch(() => speakText(text, rate, opts, done));
+      a.onerror = toDevice;
+      a.play().catch(toDevice);
     } else {
       speakText(text, rate, opts, done);
     }
@@ -222,7 +229,10 @@ export function useSpeech() {
     const rate = Math.max(0.1, (opts.rate ?? 0.8) * speedRef.current);
     const clipRate = Math.max(0.5, Math.min(1.2, speedRef.current));
     let i = 0;
+    let finished = false;
     const finish = () => {
+      if (finished) return;
+      finished = true;
       setSpeakingKey((k) => (k === key ? null : k));
       cbs.onEnd && cbs.onEnd();
     };
@@ -231,8 +241,10 @@ export function useSpeech() {
       if (i >= tokens.length) return finish();
       const t = tokens[i];
       cbs.onStart && cbs.onStart(i);
+      let advanced = false;
       const done = () => {
-        if (run !== runRef.current) return;
+        if (advanced || run !== runRef.current) return; // idempotent per token
+        advanced = true;
         i++;
         next();
       };
@@ -241,9 +253,15 @@ export function useSpeech() {
         const a = new Audio(clipUrl(resolvedClip));
         a.playbackRate = clipRate;
         audioRef.current = a;
+        let failed = false;
+        const onFail = () => {
+          if (failed) return; // error + rejected play() can both fire
+          failed = true;
+          speakFallback(t.say, rate, opts, done);
+        };
         a.onended = done;
-        a.onerror = () => speakFallback(t.say, rate, opts, done);
-        a.play().catch(() => speakFallback(t.say, rate, opts, done));
+        a.onerror = onFail;
+        a.play().catch(onFail);
       } else {
         speakFallback(t.say, rate, opts, done);
       }
@@ -289,11 +307,17 @@ export function useSpeech() {
         if (!Number.isFinite(a.duration) || a.duration <= 0) return;
         highlight(progressWordIndex(words, a.currentTime / a.duration));
       };
+      let fellBack = false;
+      const toDevice = () => {
+        if (fellBack) return; // error + rejected play() can both fire
+        fellBack = true;
+        deviceFallback();
+      };
       a.onended = () => {
         if (run === runRef.current) finish();
       };
-      a.onerror = deviceFallback;
-      a.play().catch(deviceFallback);
+      a.onerror = toDevice;
+      a.play().catch(toDevice);
     };
     setTimeout(() => {
       if (run !== runRef.current) return;

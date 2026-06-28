@@ -18,12 +18,10 @@ const TTS_ENABLED = Boolean(GOOGLE_TTS_KEY);
 // GOOGLE_VOICE_PACKS in src/data/voicePacks.js (can't import src/ here — it is
 // not shipped in the deploy package).
 const TTS_VOICES = new Set([
-  "en-US-Neural2-A",
   "en-US-Neural2-C",
   "en-US-Neural2-D",
   "en-US-Neural2-F",
   "en-US-Studio-O",
-  "en-US-Wavenet-F",
 ]);
 const DEFAULT_TTS_VOICE = "en-US-Neural2-F";
 const TTS_LANGUAGE = "en-US";
@@ -39,18 +37,24 @@ const RL_WINDOW_MS = 10 * 60 * 1000;
 const rlHits = new Map(); // ip -> { count, reset }
 const rateLimited = (ip) => {
   const now = Date.now();
-  if (rlHits.size > 5000) rlHits.clear(); // crude prune; this app is tiny
   let entry = rlHits.get(ip);
   if (!entry || now > entry.reset) {
     entry = { count: 0, reset: now + RL_WINDOW_MS };
     rlHits.set(ip, entry);
   }
   entry.count += 1;
+  // Drop only EXPIRED entries so the map stays bounded without wiping the
+  // counters of clients that are currently being throttled.
+  if (rlHits.size > 2000)
+    for (const [key, value] of rlHits) if (now > value.reset) rlHits.delete(key);
   return entry.count > RL_MAX;
 };
 
 const app = express();
-app.set("trust proxy", true); // so req.ip is the client IP behind Azure's proxy
+// Azure App Service puts exactly ONE reverse proxy in front, so trust one hop.
+// (trust proxy: true would let a client spoof X-Forwarded-For and get a fresh
+// req.ip per request, bypassing the per-IP rate limit on this paid endpoint.)
+app.set("trust proxy", 1);
 
 // ---- API routes ----
 app.get("/api/health", (req, res) => {
