@@ -58,7 +58,7 @@ export const ELEVENLABS_VOICE_PACKS = [
 // Google voice ids — used both by scripts/generate-google-audio.mjs (to write
 // committed clips under public/audio/google/<short>/) and by the live
 // /api/tts proxy when a word has no committed clip yet. Keep the voiceName list
-// in sync with the allowlist in server/index.js.
+// in sync with server/tts-voices.js (enforced by src/data/voicePacks.test.js).
 export const GOOGLE_VOICE_PACKS = [
   {
     // The very natural "Journey" voice FirstStepReading.com uses — generated

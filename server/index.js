@@ -67,11 +67,16 @@ app.get("/api/health", (req, res) => {
 // Live Google TTS fallback. GET /api/tts?text=...&voice=en-US-Neural2-F
 app.get("/api/tts", async (req, res) => {
   if (!TTS_ENABLED) return res.status(503).json({ error: "tts_disabled" });
+  // Block cross-site hotlinking (e.g. an <audio src> embedded on another site),
+  // which would generate paid Google traffic. Browsers send Sec-Fetch-Site;
+  // requests without it (older/non-browser) are allowed.
+  if (req.get("sec-fetch-site") === "cross-site")
+    return res.status(403).json({ error: "forbidden" });
 
-  const text = String(req.query.text ?? "")
-    .slice(0, TTS_MAX_LEN)
-    .trim();
+  const text = String(req.query.text ?? "").trim();
   if (!text) return res.status(400).json({ error: "missing_text" });
+  if (text.length > TTS_MAX_LEN)
+    return res.status(400).json({ error: "text_too_long" });
 
   let voice = String(req.query.voice ?? "");
   if (!TTS_VOICES.has(voice)) voice = DEFAULT_TTS_VOICE;
