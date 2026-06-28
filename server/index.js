@@ -109,7 +109,12 @@ app.get("/api/tts", async (req, res) => {
 
     if (!upstream.ok) {
       const detail = await upstream.text();
-      console.error("Google TTS upstream error", upstream.status, detail);
+      // Cap the logged body — Google error payloads can be large/noisy.
+      console.error(
+        "Google TTS upstream error",
+        upstream.status,
+        detail.slice(0, 500),
+      );
       return res.status(502).json({ error: "tts_upstream" });
     }
 
