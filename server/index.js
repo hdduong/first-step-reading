@@ -1,6 +1,7 @@
 import express from "express";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { TTS_VOICE_NAMES, DEFAULT_TTS_VOICE } from "./tts-voices.js";
 
 // Server for Azure App Service: serves the built SPA from dist/ and hosts the
 // API. App Service provides PORT. The /api/tts route is a Google Cloud
@@ -14,17 +15,10 @@ const port = process.env.PORT || 3000;
 const GOOGLE_TTS_KEY =
   process.env.GOOGLE_TTS_API_KEY || process.env.GOOGLE_API_KEY || "";
 const TTS_ENABLED = Boolean(GOOGLE_TTS_KEY);
-// Allowlist of Google voice names we permit. Keep in sync with
-// GOOGLE_VOICE_PACKS in src/data/voicePacks.js (can't import src/ here — it is
-// not shipped in the deploy package).
-const TTS_VOICES = new Set([
-  "en-US-Journey-F",
-  "en-US-Neural2-C",
-  "en-US-Neural2-D",
-  "en-US-Neural2-F",
-  "en-US-Studio-O",
-]);
-const DEFAULT_TTS_VOICE = "en-US-Neural2-F";
+// Allowlist of Google voice names the proxy may synthesize. Defined in
+// server/tts-voices.js (the deploy package doesn't ship src/);
+// src/data/voicePacks.test.js asserts it stays in sync with GOOGLE_VOICE_PACKS.
+const TTS_VOICES = new Set(TTS_VOICE_NAMES);
 const TTS_LANGUAGE = "en-US";
 const TTS_MAX_LEN = 200;
 
@@ -73,7 +67,6 @@ app.get("/api/health", (req, res) => {
 // Live Google TTS fallback. GET /api/tts?text=...&voice=en-US-Neural2-F
 app.get("/api/tts", async (req, res) => {
   if (!TTS_ENABLED) return res.status(503).json({ error: "tts_disabled" });
-  if (rateLimited(req.ip)) return res.status(429).json({ error: "rate_limited" });
 
   const text = String(req.query.text ?? "")
     .slice(0, TTS_MAX_LEN)
@@ -90,6 +83,10 @@ app.get("/api/tts", async (req, res) => {
     res.set("Cache-Control", "private, max-age=86400");
     return res.send(cached);
   }
+
+  // Rate-limit only requests that will actually hit the paid Google API
+  // (valid + uncached) — empty/invalid/cached calls don't burn the quota.
+  if (rateLimited(req.ip)) return res.status(429).json({ error: "rate_limited" });
 
   try {
     const upstream = await fetch(

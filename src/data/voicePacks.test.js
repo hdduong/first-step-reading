@@ -5,6 +5,7 @@ import {
   DEFAULT_VOICE_PACK_ID,
   voicePackById,
 } from "./voicePacks.js";
+import { TTS_VOICE_NAMES, DEFAULT_TTS_VOICE } from "../../server/tts-voices.js";
 
 describe("voice packs", () => {
   it("has a default pack that exists", () => {
@@ -30,5 +31,13 @@ describe("voice packs", () => {
       expect(pack.languageCode).toBe("en-US");
       expect(pack.voiceName).toMatch(/^en-US-/);
     }
+  });
+
+  it("server TTS allowlist stays in sync with the Google voice packs", () => {
+    const allow = new Set(TTS_VOICE_NAMES);
+    for (const pack of GOOGLE_VOICE_PACKS) {
+      expect(allow.has(pack.voiceName)).toBe(true);
+    }
+    expect(allow.has(DEFAULT_TTS_VOICE)).toBe(true);
   });
 });
