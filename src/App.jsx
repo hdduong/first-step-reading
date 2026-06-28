@@ -248,6 +248,17 @@ export default function App() {
       >
         Practice app for FirstStepReading • Sounds use recorded clips when
         available, otherwise your device’s voice 🔊
+        <br />
+        <a
+          href="/privacy"
+          style={{
+            color: C.blue,
+            fontWeight: 700,
+            textDecoration: "none",
+          }}
+        >
+          Privacy Policy
+        </a>
       </footer>
     </div>
   );
