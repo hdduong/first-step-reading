@@ -103,6 +103,15 @@ if (!foundIend) {
   throw new Error(`${sourceIcon} is missing the required PNG IEND chunk`)
 }
 
+if (resizeMode === 'copy') {
+  console.warn(
+    [
+      'IOS_APP_ICON_RESIZE_MODE=copy is for local metadata verification only;',
+      'generated PNG dimensions will not match Contents.json.',
+    ].join(' '),
+  )
+}
+
 function installImage(image) {
   const destination = resolve(appIconSet, image.filename)
 
@@ -122,7 +131,11 @@ function installImage(image) {
 
   if (result.error) {
     throw new Error(
-      `Failed to run sips while generating ${image.filename}. This script expects macOS for resizing.`,
+      [
+        `Failed to run sips while generating ${image.filename}.`,
+        'This script expects macOS for resizing.',
+        'For local metadata-only checks, set IOS_APP_ICON_RESIZE_MODE=copy.',
+      ].join(' '),
       { cause: result.error },
     )
   }
