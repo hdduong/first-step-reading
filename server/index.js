@@ -35,6 +35,7 @@ const TTS_CACHE_MAX = 500;
 // Simple fixed-window per-IP rate limit (defense-in-depth on a paid endpoint).
 const RL_MAX = 120;
 const RL_WINDOW_MS = 10 * 60 * 1000;
+const RL_MAX_IPS = 10000; // hard cap on tracked IPs so the map can't grow unbounded
 const rlHits = new Map(); // ip -> { count, reset }
 const rateLimited = (ip) => {
   const now = Date.now();
@@ -44,10 +45,16 @@ const rateLimited = (ip) => {
     rlHits.set(ip, entry);
   }
   entry.count += 1;
-  // Drop only EXPIRED entries so the map stays bounded without wiping the
-  // counters of clients that are currently being throttled.
-  if (rlHits.size > 2000)
+  if (rlHits.size > RL_MAX_IPS) {
+    // Drop expired entries first (doesn't wipe live counters); if a flood of
+    // distinct live IPs is still over the cap, evict oldest-inserted so memory
+    // stays hard-bounded.
     for (const [key, value] of rlHits) if (now > value.reset) rlHits.delete(key);
+    for (const key of rlHits.keys()) {
+      if (rlHits.size <= RL_MAX_IPS) break;
+      rlHits.delete(key);
+    }
+  }
   return entry.count > RL_MAX;
 };
 
@@ -79,7 +86,7 @@ app.get("/api/tts", async (req, res) => {
   const cached = ttsCache.get(cacheKey);
   if (cached) {
     res.set("Content-Type", "audio/mpeg");
-    res.set("Cache-Control", "public, max-age=86400");
+    res.set("Cache-Control", "private, max-age=86400");
     return res.send(cached);
   }
 
@@ -115,7 +122,7 @@ app.get("/api/tts", async (req, res) => {
     ttsCache.set(cacheKey, buffer);
 
     res.set("Content-Type", "audio/mpeg");
-    res.set("Cache-Control", "public, max-age=86400");
+    res.set("Cache-Control", "private, max-age=86400");
     res.send(buffer);
   } catch (err) {
     console.error("Google TTS request failed", err);

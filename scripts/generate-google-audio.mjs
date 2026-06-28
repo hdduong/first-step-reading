@@ -110,9 +110,14 @@ const voiceFilter = argValue("--voice");
 const folderFilter = argValue("--folder");
 const clipFilter = argValue("--clip");
 const limit = Number(argValue("--limit") || 0);
-// Clamp to Google's accepted ranges so a typo can't 400 the whole run.
-const speakingRate = Math.min(2, Math.max(0.25, Number(process.env.GOOGLE_TTS_SPEAKING_RATE || 1)));
-const pitch = Math.min(20, Math.max(-20, Number(process.env.GOOGLE_TTS_PITCH || 0)));
+// Clamp to Google's accepted ranges, falling back to the default for a
+// non-numeric value so a typo (e.g. "fast") can't send NaN and 400 the run.
+const clampNum = (value, lo, hi, fallback) => {
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : fallback;
+};
+const speakingRate = clampNum(process.env.GOOGLE_TTS_SPEAKING_RATE, 0.25, 2, 1);
+const pitch = clampNum(process.env.GOOGLE_TTS_PITCH, -20, 20, 0);
 
 // Journey voices reject speakingRate/pitch; at defaults they're a no-op anyway,
 // so only attach tuning for non-Journey voices when it differs from the default.

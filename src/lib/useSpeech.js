@@ -92,7 +92,7 @@ export function useSpeech() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     let alive = true;
-    fetch("/api/health")
+    fetch("/api/health", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (alive && data) ttsRef.current.enabled = Boolean(data.tts);
@@ -291,7 +291,10 @@ export function useSpeech() {
         if (run === runRef.current) finish();
       });
     };
+    let lastHighlight = -1;
     const highlight = (index) => {
+      if (index === lastHighlight) return; // skip redundant onStart from ontimeupdate
+      lastHighlight = index;
       if (run === runRef.current) cbs.onStart && cbs.onStart(index);
     };
     // Google TTS proxy (with progress highlighting) before the device voice.
