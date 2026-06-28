@@ -244,6 +244,7 @@ export default function App() {
           fontSize: 12,
           marginTop: 26,
           padding: "0 16px",
+          lineHeight: 1.8,
         }}
       >
         Practice app for FirstStepReading • Sounds use recorded clips when
@@ -251,14 +252,28 @@ export default function App() {
         <br />
         <a
           href="/privacy"
-          style={{
-            color: C.blue,
-            fontWeight: 700,
-            textDecoration: "none",
-          }}
+          style={{ color: C.blue, fontWeight: 700, textDecoration: "none" }}
         >
           Privacy Policy
         </a>
+        {" • "}
+        <a
+          href="https://firststepreadingapp.com/support"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: C.blue, fontWeight: 700, textDecoration: "none" }}
+        >
+          Support
+        </a>
+        {" • "}
+        <a
+          href="mailto:support@firststepreadingapp.com"
+          style={{ color: C.blue, fontWeight: 700, textDecoration: "none" }}
+        >
+          support@firststepreadingapp.com
+        </a>
+        <br />
+        <span>Reading content © FirstStepReading.com</span>
       </footer>
     </div>
   );
