@@ -113,6 +113,16 @@ const limit = Number(argValue("--limit") || 0);
 // Clamp to Google's accepted ranges so a typo can't 400 the whole run.
 const speakingRate = Math.min(2, Math.max(0.25, Number(process.env.GOOGLE_TTS_SPEAKING_RATE || 1)));
 const pitch = Math.min(20, Math.max(-20, Number(process.env.GOOGLE_TTS_PITCH || 0)));
+
+// Journey voices reject speakingRate/pitch; at defaults they're a no-op anyway,
+// so only attach tuning for non-Journey voices when it differs from the default.
+const buildAudioConfig = (pack) => {
+  const config = { audioEncoding: "MP3" };
+  if (/Journey/i.test(pack.voiceName)) return config;
+  if (speakingRate !== 1) config.speakingRate = speakingRate;
+  if (pitch !== 0) config.pitch = pitch;
+  return config;
+};
 const delayMs = Number(process.env.GOOGLE_TTS_DELAY_MS || 120);
 
 let packs;
@@ -157,7 +167,7 @@ const requestAudio = async (pack, text) => {
         languageCode: pack.languageCode || "en-US",
         name: pack.voiceName,
       },
-      audioConfig: { audioEncoding: "MP3", speakingRate, pitch },
+      audioConfig: buildAudioConfig(pack),
     }),
   });
 

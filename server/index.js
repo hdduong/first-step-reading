@@ -18,6 +18,7 @@ const TTS_ENABLED = Boolean(GOOGLE_TTS_KEY);
 // GOOGLE_VOICE_PACKS in src/data/voicePacks.js (can't import src/ here — it is
 // not shipped in the deploy package).
 const TTS_VOICES = new Set([
+  "en-US-Journey-F",
   "en-US-Neural2-C",
   "en-US-Neural2-D",
   "en-US-Neural2-F",

@@ -61,6 +61,16 @@ export const ELEVENLABS_VOICE_PACKS = [
 // in sync with the allowlist in server/index.js.
 export const GOOGLE_VOICE_PACKS = [
   {
+    // The very natural "Journey" voice FirstStepReading.com uses — generated
+    // through our OWN Google Cloud account. Journey ignores speakingRate/pitch.
+    id: "google-journey",
+    label: "Journey - Google (natural)",
+    provider: "google",
+    prefix: "google/journey",
+    voiceName: "en-US-Journey-F",
+    languageCode: "en-US",
+  },
+  {
     id: "google-clara",
     label: "Clara - Google Neural2",
     provider: "google",
