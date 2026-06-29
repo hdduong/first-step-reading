@@ -33,6 +33,14 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      # UI screenshots of the key screens — download this artifact from the run
+      # to see the app's UI for the PR.
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: ui-screenshots
+          path: ui-screenshots/
+          retention-days: 14
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
