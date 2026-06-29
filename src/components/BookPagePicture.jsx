@@ -13,8 +13,9 @@ function bookPageImageSrc(bookId, page) {
 }
 
 export default function BookPagePicture({ bookId, page, fallbackPic }) {
-  const [failed, setFailed] = useState(false);
-  const src = failed ? null : bookPageImageSrc(bookId, page);
+  const [failedSrc, setFailedSrc] = useState(null);
+  const src = bookPageImageSrc(bookId, page);
+  const showImage = src && failedSrc !== src;
 
   return (
     <div
@@ -32,12 +33,12 @@ export default function BookPagePicture({ bookId, page, fallbackPic }) {
         justifyContent: "center",
       }}
     >
-      {src ? (
+      {showImage ? (
         <img
           src={src}
           alt={`Book page ${page} picture`}
           loading="lazy"
-          onError={() => setFailed(true)}
+          onError={() => setFailedSrc(src)}
           style={{
             width: "100%",
             height: "100%",
