@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { C, cardStyle } from "../theme.js";
 
 // Full-screen pop-out used by the Words and Sight tabs: a big, focus-holding
@@ -11,6 +11,19 @@ export default function PopOut({
   maxWidth = 420,
   padding = "34px 24px 26px",
 }) {
+  const closeButtonRef = useRef(null);
+
+  useEffect(() => {
+    const returnFocus = document.activeElement;
+    closeButtonRef.current?.focus();
+
+    return () => {
+      if (returnFocus instanceof HTMLElement && returnFocus.isConnected) {
+        returnFocus.focus();
+      }
+    };
+  }, []);
+
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -46,6 +59,7 @@ export default function PopOut({
         }}
       >
         <button
+          ref={closeButtonRef}
           type="button"
           onClick={onClose}
           aria-label="Close"

@@ -164,17 +164,10 @@ export default function LetterSoundsTab({ speech }) {
                   boxShadow: isPlaying ? ring : "0 2px 0 rgba(0,0,0,0.05)",
                 }}
               >
-                <div
+                <button
+                  type="button"
                   onClick={() => openLetter(item)}
-                  role="button"
-                  tabIndex={0}
                   aria-label={`Pop out ${upper}`}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" || event.key === " ") {
-                      event.preventDefault();
-                      openLetter(item);
-                    }
-                  }}
                   style={{
                     cursor: "pointer",
                     width: "100%",
@@ -182,6 +175,10 @@ export default function LetterSoundsTab({ speech }) {
                     flexDirection: "column",
                     alignItems: "center",
                     gap: 4,
+                    padding: 0,
+                    border: "none",
+                    background: "transparent",
+                    fontFamily: "inherit",
                   }}
                 >
                   <div
@@ -211,7 +208,7 @@ export default function LetterSoundsTab({ speech }) {
                   >
                     {item.word}
                   </div>
-                </div>
+                </button>
                 <div
                   style={{
                     display: "flex",

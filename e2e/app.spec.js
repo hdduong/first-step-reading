@@ -68,18 +68,23 @@ test("letter-sound sets cover A-Z and open the matching video", async ({ page })
   await expect(letterDialog.locator('[data-letter-popout="a"]')).toContainText(
     "apple",
   );
+  await expect(letterDialog.getByRole("button", { name: "Close" })).toBeFocused();
   await letterDialog.getByRole("button", { name: "Close" }).click();
+  await expect(letterDialog).toBeHidden();
+  await expect(aCard.getByRole("button", { name: "Pop out A" })).toBeFocused();
 
   const popoutButton = aCard.getByRole("button", { name: "Pop out A" });
   await popoutButton.focus();
   await page.keyboard.press("Enter");
   await expect(letterDialog).toBeVisible();
   await letterDialog.getByRole("button", { name: "Close" }).click();
+  await expect(letterDialog).toBeHidden();
 
   await popoutButton.focus();
   await page.keyboard.press("Space");
   await expect(letterDialog).toBeVisible();
   await letterDialog.getByRole("button", { name: "Close" }).click();
+  await expect(letterDialog).toBeHidden();
 
   for (const [group, letters] of [
     ["A-E", "abcde"],
