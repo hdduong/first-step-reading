@@ -41,13 +41,61 @@ test("sidebar groups by vowel; picking The Pig (Short I) switches the words", as
   await expect(page.getByRole("button", { name: "Pop out Cat" })).toHaveCount(0);
 });
 
-test("switches between the four tabs", async ({ page }) => {
+test("switches between the five tabs", async ({ page }) => {
+  await page.getByRole("button", { name: "Letter Sounds" }).click();
+  await expect(page.getByRole("heading", { name: "Letter Sounds" })).toBeVisible();
+  await expect(page.locator('[data-letter-sound="a"]')).toBeVisible();
   await page.getByRole("button", { name: "Sight Words" }).click();
   await expect(page.getByText(/Sight words for pages/i)).toBeVisible();
   await page.getByRole("button", { name: "Read It" }).click();
   await expect(page.getByText(/tap any word/i)).toBeVisible();
   await page.getByRole("button", { name: "Game" }).click();
   await expect(page.getByText(/Listen and find/i)).toBeVisible();
+});
+
+test("letter-sound sets cover A-Z and open the matching video", async ({ page }) => {
+  await page.getByRole("button", { name: "Letter Sounds" }).click();
+
+  for (const [group, letters] of [
+    ["A-E", "abcde"],
+    ["F-J", "fghij"],
+    ["K-O", "klmno"],
+    ["P-T", "pqrst"],
+    ["U-Z", "uvwxyz"],
+  ]) {
+    await page.getByRole("tab", { name: group }).click();
+    for (const letter of letters) {
+      await expect(page.locator(`[data-letter-sound="${letter}"]`)).toBeVisible();
+    }
+  }
+
+  const zCard = page.locator('[data-letter-sound="z"]');
+  await zCard.getByRole("button", { name: "Video" }).click();
+  const dialog = page.getByRole("dialog", { name: "Z letter sound video" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator("video")).toHaveAttribute(
+    "src",
+    "/video/letter-sounds/Disk1/z.mp4",
+  );
+});
+
+test("letter-sound group tabs support keyboard navigation", async ({ page }) => {
+  await page.getByRole("button", { name: "Letter Sounds" }).click();
+
+  const firstTab = page.getByRole("tab", { name: "A-E" });
+  await firstTab.focus();
+  await expect(firstTab).toHaveAttribute("aria-controls", "letter-sound-panel");
+
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "F-J" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(page.getByRole("tabpanel", { name: "F-J" })).toBeVisible();
+
+  await page.keyboard.press("End");
+  await expect(page.getByRole("tab", { name: "U-Z" })).toBeFocused();
+  await expect(page.getByRole("tabpanel", { name: "U-Z" })).toBeVisible();
 });
 
 test("read pages show book page pictures", async ({ page }) => {

@@ -9,14 +9,22 @@ import WordsTab from "./components/tabs/WordsTab.jsx";
 import SightTab from "./components/tabs/SightTab.jsx";
 import ReadTab from "./components/tabs/ReadTab.jsx";
 import GameTab from "./components/tabs/GameTab.jsx";
+import LetterSoundsTab from "./components/tabs/LetterSoundsTab.jsx";
 
 const TABS = [
+  ["letters", "🔊 Letter Sounds"],
   ["words", "🔤 Words"],
   ["sight", "⭐ Sight Words"],
   ["read", "📖 Read It"],
   ["game", "🎮 Game"],
 ];
-const TAB_COMPONENTS = { words: WordsTab, sight: SightTab, read: ReadTab, game: GameTab };
+const TAB_COMPONENTS = {
+  letters: LetterSoundsTab,
+  words: WordsTab,
+  sight: SightTab,
+  read: ReadTab,
+  game: GameTab,
+};
 
 export default function App() {
   const [bookIdx, setBookIdx] = useState(0);
@@ -71,10 +79,13 @@ export default function App() {
         .pagemenu { flex: 0 0 176px; position: sticky; top: 12px; }
         .pagemenu .pagebtns { display: flex; flex-direction: column; gap: 8px; }
         .content { flex: 1; min-width: 0; }
+        .letter-sound-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
         @media (max-width: 720px) {
           .layout { flex-direction: column; gap: 12px; }
           .pagemenu { position: static; flex: none; width: 100%; }
           .pagemenu .pagebtns { flex-direction: row; }
+          .content { width: 100%; max-width: 100%; }
+          .letter-sound-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
       `}</style>
 
@@ -212,7 +223,7 @@ export default function App() {
               </nav>
 
               <main style={{ padding: "12px 0 0" }}>
-                <VoiceSettings speech={speech} />
+                {tab !== "letters" && <VoiceSettings speech={speech} />}
                 <TabEl
                   key={`${book.id}-${lessonIdx}`}
                   book={book}

@@ -21,6 +21,24 @@ test("home — Words tab", async ({ page }) => {
   await page.screenshot({ path: `${SHOTS}/01-words.png`, fullPage: true });
 });
 
+test("Letter Sounds tab", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Letter Sounds" }).click();
+  await page.locator('[data-letter-sound="a"]').waitFor();
+  await page.screenshot({ path: `${SHOTS}/01-letter-sounds.png`, fullPage: true });
+});
+
+test("Letter sound video", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Letter Sounds" }).click();
+  await page
+    .locator('[data-letter-sound="a"]')
+    .getByRole("button", { name: "Video" })
+    .click();
+  await page.getByRole("dialog", { name: "A letter sound video" }).waitFor();
+  await page.screenshot({ path: `${SHOTS}/02-letter-sound-video.png` });
+});
+
 test("word popped out", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Pop out Cat" }).click();
@@ -54,6 +72,17 @@ test("mobile — Words tab", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Pop out Cat" }).waitFor();
   await page.screenshot({ path: `${SHOTS}/06-mobile-words.png`, fullPage: true });
+});
+
+test("mobile — Letter Sounds tab", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Letter Sounds" }).click();
+  await page.locator('[data-letter-sound="a"]').waitFor();
+  await page.screenshot({
+    path: `${SHOTS}/06-mobile-letter-sounds.png`,
+    fullPage: true,
+  });
 });
 
 test("Privacy page", async ({ page }) => {
