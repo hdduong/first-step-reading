@@ -25,6 +25,7 @@ export default function LetterSoundsTab({ speech }) {
   const [videoLetter, setVideoLetter] = useState(null);
   const audioRef = useRef(null);
   const tabRefs = useRef([]);
+  const returnFocusRef = useRef(null);
   const activeSet = LETTER_SOUND_SETS[setIndex];
 
   const stopAudio = () => {
@@ -70,16 +71,18 @@ export default function LetterSoundsTab({ speech }) {
     audio.play().catch(stopAudio);
   };
 
-  const openVideo = (item) => {
+  const openVideo = (item, returnFocusElement) => {
     speech.cancel();
     stopAudio();
+    if (returnFocusElement) returnFocusRef.current = returnFocusElement;
     setPopLetter(null);
     setVideoLetter(item);
   };
 
-  const openLetter = (item) => {
+  const openLetter = (item, returnFocusElement) => {
     speech.cancel();
     stopAudio();
+    returnFocusRef.current = returnFocusElement;
     setVideoLetter(null);
     setPopLetter(item);
   };
@@ -166,7 +169,7 @@ export default function LetterSoundsTab({ speech }) {
               >
                 <button
                   type="button"
-                  onClick={() => openLetter(item)}
+                  onClick={(event) => openLetter(item, event.currentTarget)}
                   aria-label={`Pop out ${upper}`}
                   style={{
                     cursor: "pointer",
@@ -220,7 +223,11 @@ export default function LetterSoundsTab({ speech }) {
                   <Pill small onClick={() => hearLetter(item)}>
                     🔊 Hear
                   </Pill>
-                  <Pill small bg={C.green} onClick={() => openVideo(item)}>
+                  <Pill
+                    small
+                    bg={C.green}
+                    onClick={(event) => openVideo(item, event.currentTarget)}
+                  >
                     ▶ Video
                   </Pill>
                 </div>
@@ -234,6 +241,7 @@ export default function LetterSoundsTab({ speech }) {
         <PopOut
           label={`${popLetter.letter.toUpperCase()} letter card`}
           onClose={() => setPopLetter(null)}
+          returnFocusRef={returnFocusRef}
         >
           <div
             data-letter-popout={popLetter.letter}
@@ -277,6 +285,7 @@ export default function LetterSoundsTab({ speech }) {
         <PopOut
           label={`${videoLetter.letter.toUpperCase()} letter sound video`}
           onClose={() => setVideoLetter(null)}
+          returnFocusRef={returnFocusRef}
           maxWidth={620}
           padding="48px 14px 14px"
         >

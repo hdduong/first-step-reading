@@ -86,6 +86,17 @@ test("letter-sound sets cover A-Z and open the matching video", async ({ page })
   await letterDialog.getByRole("button", { name: "Close" }).click();
   await expect(letterDialog).toBeHidden();
 
+  await popoutButton.click();
+  await letterDialog.getByRole("button", { name: "Video" }).click();
+  await expect(letterDialog).toBeHidden();
+  const nestedVideoDialog = page.getByRole("dialog", {
+    name: "A letter sound video",
+  });
+  await expect(nestedVideoDialog).toBeVisible();
+  await nestedVideoDialog.getByRole("button", { name: "Close" }).click();
+  await expect(nestedVideoDialog).toBeHidden();
+  await expect(popoutButton).toBeFocused();
+
   for (const [group, letters] of [
     ["A-E", "abcde"],
     ["F-J", "fghij"],

@@ -10,11 +10,12 @@ export default function PopOut({
   children,
   maxWidth = 420,
   padding = "34px 24px 26px",
+  returnFocusRef,
 }) {
   const closeButtonRef = useRef(null);
 
   useEffect(() => {
-    const returnFocus = document.activeElement;
+    const returnFocus = returnFocusRef?.current ?? document.activeElement;
     closeButtonRef.current?.focus();
 
     return () => {
@@ -22,7 +23,7 @@ export default function PopOut({
         returnFocus.focus();
       }
     };
-  }, []);
+  }, [returnFocusRef]);
 
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
