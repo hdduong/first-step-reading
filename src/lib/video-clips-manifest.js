@@ -100,7 +100,7 @@ export const VIDEO_CLIPS = {
       "word": "cab",
       "disk": "Disk1",
       "path": "Disk1/050_cab_011000.mp4",
-      "approxTime": "01:10:00"
+      "approxTime": "01:10:08"
     }
   ],
   "can": [
@@ -148,7 +148,7 @@ export const VIDEO_CLIPS = {
       "word": "dad",
       "disk": "Disk1",
       "path": "Disk1/048_dad_010920.mp4",
-      "approxTime": "01:09:31"
+      "approxTime": "01:09:18"
     }
   ],
   "did": [
@@ -388,7 +388,7 @@ export const VIDEO_CLIPS = {
       "word": "map",
       "disk": "Disk1",
       "path": "Disk1/052_map_011100.mp4",
-      "approxTime": "01:11:00"
+      "approxTime": "01:11:01"
     }
   ],
   "me": [

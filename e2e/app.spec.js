@@ -104,6 +104,42 @@ test("read page pictures and cards pop out into a full read card", async ({ page
   await expect(page.getByRole("dialog", { name: "Read page 3" })).toBeHidden();
 });
 
+test("later short-A lessons color new families red and earlier -at words green", async ({
+  page,
+}) => {
+  const expectRimeColor = async (scope, word, family, color) => {
+    const familyWord = scope.locator(`[data-word="${word}"][data-family="${family}"]`).first();
+    await expect(familyWord.locator(`[data-family-rime="${family}"]`)).toHaveCSS(
+      "color",
+      color,
+    );
+  };
+
+  await page.getByRole("button", { name: /Dad's Bag/ }).click();
+  await expectRimeColor(page.getByRole("button", { name: "Pop out Bag" }), "bag", "ag", "rgb(232, 80, 58)");
+  await expectRimeColor(page.getByRole("button", { name: "Pop out Gag" }), "gag", "ag", "rgb(232, 80, 58)");
+  await expectRimeColor(page.getByRole("button", { name: "Pop out Wag" }), "wag", "ag", "rgb(232, 80, 58)");
+
+  await page.getByRole("button", { name: "Read It" }).click();
+  const page18 = page.getByTestId("read-card-page-18");
+  await expectRimeColor(page18, "mat", "at", "rgb(58, 166, 85)");
+  await expectRimeColor(page18, "dad", "ad", "rgb(232, 80, 58)");
+  await expectRimeColor(page18, "bag", "ag", "rgb(232, 80, 58)");
+  await expectRimeColor(page18, "wags", "ag", "rgb(232, 80, 58)");
+  await expect(page18.locator('[data-word="wags"] [data-family-suffix]')).toHaveText("s");
+
+  await page.getByRole("button", { name: /Dab\. Rap a Tap\./ }).click();
+  await page.getByRole("button", { name: /^🔤 Words$/ }).click();
+  await expectRimeColor(page.getByRole("button", { name: "Pop out Dab" }), "dab", "ab", "rgb(232, 80, 58)");
+  await expectRimeColor(page.getByRole("button", { name: "Pop out Map" }), "map", "ap", "rgb(232, 80, 58)");
+
+  await page.getByRole("button", { name: "Read It" }).click();
+  await expectRimeColor(page.getByTestId("read-card-page-23"), "dab", "ab", "rgb(232, 80, 58)");
+  await expectRimeColor(page.getByTestId("read-card-page-25"), "pat", "at", "rgb(58, 166, 85)");
+  await expectRimeColor(page.getByTestId("read-card-page-26"), "map", "ap", "rgb(232, 80, 58)");
+  await expectRimeColor(page.getByTestId("read-card-page-26"), "cab", "ab", "rgb(232, 80, 58)");
+});
+
 test("book dropdown can select a coming-soon book", async ({ page }) => {
   await page.getByLabel("Choose your book").selectOption("1");
   await expect(page.getByText("Book 2 is coming soon!")).toBeVisible();

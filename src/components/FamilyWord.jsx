@@ -14,13 +14,34 @@ export default function FamilyWord({ word, family, size = 30 }) {
   const tail = m[3];
   const displayFamily = familyForWord(clean, family);
   const hit = Boolean(displayFamily);
-  const onset = hit ? clean.slice(0, clean.length - displayFamily.length) : clean;
-  const rime = hit ? clean.slice(clean.length - displayFamily.length) : "";
+  const familyStart = hit
+    ? clean.toLowerCase().lastIndexOf(displayFamily)
+    : -1;
+  const familyEnd = hit ? familyStart + displayFamily.length : -1;
+  const onset = hit ? clean.slice(0, familyStart) : clean;
+  const rime = hit ? clean.slice(familyStart, familyEnd) : "";
+  const suffix = hit ? clean.slice(familyEnd) : "";
   return (
-    <span style={{ fontSize: size, fontWeight: 700, letterSpacing: 1 }}>
+    <span
+      data-word={clean.toLowerCase()}
+      data-family={displayFamily || undefined}
+      style={{ fontSize: size, fontWeight: 700, letterSpacing: 1 }}
+    >
       {lead && <span style={{ color: C.blueDark }}>{lead}</span>}
       <span style={{ color: hit ? C.blue : C.blueDark }}>{onset}</span>
-      {hit && <span style={{ color: familyRimeColor(displayFamily, family) }}>{rime}</span>}
+      {hit && (
+        <span
+          data-family-rime={displayFamily}
+          style={{ color: familyRimeColor(displayFamily, family) }}
+        >
+          {rime}
+        </span>
+      )}
+      {suffix && (
+        <span data-family-suffix style={{ color: C.blueDark }}>
+          {suffix}
+        </span>
+      )}
       {tail && <span style={{ color: C.blueDark }}>{tail}</span>}
     </span>
   );
