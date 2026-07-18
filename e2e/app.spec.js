@@ -56,6 +56,20 @@ test("switches between the five tabs", async ({ page }) => {
 test("letter-sound sets cover A-Z and open the matching video", async ({ page }) => {
   await page.getByRole("button", { name: "Letter Sounds" }).click();
 
+  const aCard = page.locator('[data-letter-sound="a"]');
+  await expect(aCard).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(aCard.locator('[data-letter-glyph="a"]')).toHaveCSS(
+    "color",
+    "rgb(29, 79, 145)",
+  );
+  await aCard.getByRole("button", { name: "Pop out A" }).click();
+  const letterDialog = page.getByRole("dialog", { name: "A letter card" });
+  await expect(letterDialog).toBeVisible();
+  await expect(letterDialog.locator('[data-letter-popout="a"]')).toContainText(
+    "apple",
+  );
+  await letterDialog.getByRole("button", { name: "Close" }).click();
+
   for (const [group, letters] of [
     ["A-E", "abcde"],
     ["F-J", "fghij"],

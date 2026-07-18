@@ -39,6 +39,14 @@ test("Letter sound video", async ({ page }) => {
   await page.screenshot({ path: `${SHOTS}/02-letter-sound-video.png` });
 });
 
+test("Letter card popped out", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Letter Sounds" }).click();
+  await page.getByRole("button", { name: "Pop out A" }).click();
+  await page.getByRole("dialog", { name: "A letter card" }).waitFor();
+  await page.screenshot({ path: `${SHOTS}/02-letter-popout.png` });
+});
+
 test("word popped out", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Pop out Cat" }).click();
