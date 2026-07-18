@@ -56,6 +56,47 @@ test("switches between the five tabs", async ({ page }) => {
 test("letter-sound sets cover A-Z and open the matching video", async ({ page }) => {
   await page.getByRole("button", { name: "Letter Sounds" }).click();
 
+  const aCard = page.locator('[data-letter-sound="a"]');
+  await expect(aCard).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(aCard.locator('[data-letter-glyph="a"]')).toHaveCSS(
+    "color",
+    "rgb(29, 79, 145)",
+  );
+  await aCard.getByRole("button", { name: "Pop out A" }).click();
+  const letterDialog = page.getByRole("dialog", { name: "A letter card" });
+  await expect(letterDialog).toBeVisible();
+  await expect(letterDialog.locator('[data-letter-popout="a"]')).toContainText(
+    "apple",
+  );
+  await expect(letterDialog.getByRole("button", { name: "Close" })).toBeFocused();
+  await letterDialog.getByRole("button", { name: "Close" }).click();
+  await expect(letterDialog).toBeHidden();
+  await expect(aCard.getByRole("button", { name: "Pop out A" })).toBeFocused();
+
+  const popoutButton = aCard.getByRole("button", { name: "Pop out A" });
+  await popoutButton.focus();
+  await page.keyboard.press("Enter");
+  await expect(letterDialog).toBeVisible();
+  await letterDialog.getByRole("button", { name: "Close" }).click();
+  await expect(letterDialog).toBeHidden();
+
+  await popoutButton.focus();
+  await page.keyboard.press("Space");
+  await expect(letterDialog).toBeVisible();
+  await letterDialog.getByRole("button", { name: "Close" }).click();
+  await expect(letterDialog).toBeHidden();
+
+  await popoutButton.click();
+  await letterDialog.getByRole("button", { name: "Video" }).click();
+  await expect(letterDialog).toBeHidden();
+  const nestedVideoDialog = page.getByRole("dialog", {
+    name: "A letter sound video",
+  });
+  await expect(nestedVideoDialog).toBeVisible();
+  await nestedVideoDialog.getByRole("button", { name: "Close" }).click();
+  await expect(nestedVideoDialog).toBeHidden();
+  await expect(popoutButton).toBeFocused();
+
   for (const [group, letters] of [
     ["A-E", "abcde"],
     ["F-J", "fghij"],
