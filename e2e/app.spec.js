@@ -70,6 +70,17 @@ test("letter-sound sets cover A-Z and open the matching video", async ({ page })
   );
   await letterDialog.getByRole("button", { name: "Close" }).click();
 
+  const popoutButton = aCard.getByRole("button", { name: "Pop out A" });
+  await popoutButton.focus();
+  await page.keyboard.press("Enter");
+  await expect(letterDialog).toBeVisible();
+  await letterDialog.getByRole("button", { name: "Close" }).click();
+
+  await popoutButton.focus();
+  await page.keyboard.press("Space");
+  await expect(letterDialog).toBeVisible();
+  await letterDialog.getByRole("button", { name: "Close" }).click();
+
   for (const [group, letters] of [
     ["A-E", "abcde"],
     ["F-J", "fghij"],
