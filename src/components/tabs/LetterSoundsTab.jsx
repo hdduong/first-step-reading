@@ -9,6 +9,16 @@ const BASE_URL = `${import.meta.env.BASE_URL || "/"}video/letter-sounds/`;
 const videoUrl = (item) => `${BASE_URL}${item.video}`;
 const VOWELS = new Set(["a", "e", "i", "o", "u"]);
 
+const releaseAudio = (audioRef) => {
+  const audio = audioRef.current;
+  if (!audio) return;
+  audio.onplay = null;
+  audio.onended = null;
+  audio.onerror = null;
+  audio.pause();
+  audioRef.current = null;
+};
+
 export default function LetterSoundsTab({ speech }) {
   const [setIndex, setSetIndex] = useState(0);
   const [playingLetter, setPlayingLetter] = useState(null);
@@ -18,19 +28,11 @@ export default function LetterSoundsTab({ speech }) {
   const activeSet = LETTER_SOUND_SETS[setIndex];
 
   const stopAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
+    releaseAudio(audioRef);
     setPlayingLetter(null);
   };
 
-  useEffect(
-    () => () => {
-      if (audioRef.current) audioRef.current.pause();
-    },
-    [],
-  );
+  useEffect(() => () => releaseAudio(audioRef), []);
 
   const chooseSet = (index) => {
     stopAudio();
