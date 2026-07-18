@@ -30,7 +30,7 @@ const sections = [
   {
     title: "How to use the app",
     body: [
-      "Pick a book and a lesson from the menu, then use Letter Sounds, Words, Sight Words, Read It, and Game to practice. Tap any word to hear it; in Read It, tap a word to pop it big.",
+      "Pick a book and a lesson from the menu, then use the tabs: Letter Sounds, Words, Sight Words, Read It, and Game. Tap any word to hear it; in Read It, tap a word to pop it big.",
     ],
   },
   {

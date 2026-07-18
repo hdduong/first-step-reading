@@ -79,6 +79,25 @@ test("letter-sound sets cover A-Z and open the matching video", async ({ page })
   );
 });
 
+test("letter-sound group tabs support keyboard navigation", async ({ page }) => {
+  await page.getByRole("button", { name: "Letter Sounds" }).click();
+
+  const firstTab = page.getByRole("tab", { name: "A-E" });
+  await firstTab.focus();
+  await expect(firstTab).toHaveAttribute("aria-controls", "letter-sound-panel");
+
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "F-J" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(page.getByRole("tabpanel", { name: "F-J" })).toBeVisible();
+
+  await page.keyboard.press("End");
+  await expect(page.getByRole("tab", { name: "U-Z" })).toBeFocused();
+  await expect(page.getByRole("tabpanel", { name: "U-Z" })).toBeVisible();
+});
+
 test("read pages show book page pictures", async ({ page }) => {
   await page.getByRole("button", { name: "Read It" }).click();
 

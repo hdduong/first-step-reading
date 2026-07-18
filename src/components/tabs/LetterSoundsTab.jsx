@@ -14,6 +14,7 @@ export default function LetterSoundsTab({ speech }) {
   const [playingLetter, setPlayingLetter] = useState(null);
   const [videoLetter, setVideoLetter] = useState(null);
   const audioRef = useRef(null);
+  const tabRefs = useRef([]);
   const activeSet = LETTER_SOUND_SETS[setIndex];
 
   const stopAudio = () => {
@@ -34,6 +35,26 @@ export default function LetterSoundsTab({ speech }) {
   const chooseSet = (index) => {
     stopAudio();
     setSetIndex(index);
+  };
+
+  const handleSetKeyDown = (event, index) => {
+    let nextIndex;
+    if (event.key === "ArrowRight") {
+      nextIndex = (index + 1) % LETTER_SOUND_SETS.length;
+    } else if (event.key === "ArrowLeft") {
+      nextIndex =
+        (index - 1 + LETTER_SOUND_SETS.length) % LETTER_SOUND_SETS.length;
+    } else if (event.key === "Home") {
+      nextIndex = 0;
+    } else if (event.key === "End") {
+      nextIndex = LETTER_SOUND_SETS.length - 1;
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+    chooseSet(nextIndex);
+    tabRefs.current[nextIndex]?.focus();
   };
 
   const hearLetter = (item) => {
@@ -75,11 +96,18 @@ export default function LetterSoundsTab({ speech }) {
           {LETTER_SOUND_SETS.map((set, index) => (
             <button
               key={set.id}
+              id={`letter-sound-tab-${set.id}`}
               type="button"
               role="tab"
               aria-selected={index === setIndex}
+              aria-controls="letter-sound-panel"
+              tabIndex={index === setIndex ? 0 : -1}
+              ref={(node) => {
+                tabRefs.current[index] = node;
+              }}
               className="press"
               onClick={() => chooseSet(index)}
+              onKeyDown={(event) => handleSetKeyDown(event, index)}
               style={{
                 flex: "1 1 54px",
                 minWidth: 54,
@@ -100,69 +128,78 @@ export default function LetterSoundsTab({ speech }) {
         </div>
       </div>
 
-      <h2 style={h2Style}>{activeSet.label}</h2>
-      <div className="letter-sound-grid">
-        {activeSet.letters.map((item) => {
-          const isVowel = VOWELS.has(item.letter);
-          const isPlaying = playingLetter === item.letter;
-          const upper = item.letter.toUpperCase();
+      <div
+        id="letter-sound-panel"
+        role="tabpanel"
+        aria-labelledby={`letter-sound-tab-${activeSet.id}`}
+        tabIndex={0}
+      >
+        <h2 style={h2Style}>{activeSet.label}</h2>
+        <div className="letter-sound-grid">
+          {activeSet.letters.map((item) => {
+            const isVowel = VOWELS.has(item.letter);
+            const isPlaying = playingLetter === item.letter;
+            const upper = item.letter.toUpperCase();
 
-          return (
-            <article
-              key={item.letter}
-              data-letter-sound={item.letter}
-              style={{
-                ...cardStyle,
-                minHeight: 236,
-                justifyContent: "space-between",
-                background: isVowel ? C.yellowSoft : "#fff",
-                boxShadow: isPlaying ? ring : "0 2px 0 rgba(0,0,0,0.05)",
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    color: isVowel ? C.red : C.blue,
-                    fontSize: 54,
-                    fontWeight: 700,
-                    lineHeight: 1,
-                  }}
-                >
-                  {upper}
-                  <span style={{ fontSize: 38 }}>{item.letter}</span>
-                </div>
-                <div
-                  style={{
-                    height: 64,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <PicFor pic={item.pic} size={50} />
-                </div>
-                <div style={{ color: C.blueDark, fontSize: 17, fontWeight: 700 }}>
-                  {item.word}
-                </div>
-              </div>
-              <div
+            return (
+              <article
+                key={item.letter}
+                data-letter-sound={item.letter}
                 style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: 7,
-                  flexWrap: "wrap",
+                  ...cardStyle,
+                  minHeight: 236,
+                  justifyContent: "space-between",
+                  background: isVowel ? C.yellowSoft : "#fff",
+                  boxShadow: isPlaying ? ring : "0 2px 0 rgba(0,0,0,0.05)",
                 }}
               >
-                <Pill small onClick={() => hearLetter(item)}>
-                  🔊 Hear
-                </Pill>
-                <Pill small bg={C.green} onClick={() => openVideo(item)}>
-                  ▶ Video
-                </Pill>
-              </div>
-            </article>
-          );
-        })}
+                <div>
+                  <div
+                    style={{
+                      color: isVowel ? C.red : C.blue,
+                      fontSize: 54,
+                      fontWeight: 700,
+                      lineHeight: 1,
+                    }}
+                  >
+                    {upper}
+                    <span style={{ fontSize: 38 }}>{item.letter}</span>
+                  </div>
+                  <div
+                    style={{
+                      height: 64,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <PicFor pic={item.pic} size={50} />
+                  </div>
+                  <div
+                    style={{ color: C.blueDark, fontSize: 17, fontWeight: 700 }}
+                  >
+                    {item.word}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: 7,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Pill small onClick={() => hearLetter(item)}>
+                    🔊 Hear
+                  </Pill>
+                  <Pill small bg={C.green} onClick={() => openVideo(item)}>
+                    ▶ Video
+                  </Pill>
+                </div>
+              </article>
+            );
+          })}
+        </div>
       </div>
 
       {videoLetter && (
